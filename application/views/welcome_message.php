@@ -10,9 +10,11 @@
 	<div id="top-fixed-section-one">
 		<div id="main-menu-container">
 			<ul id="main-menu">
-				<li><a href="#"><?=$site_name?></a></li>
-				<li><a href="#">Contact Us</a></li>
-				<li><a href="#">About</a></li>
+				<li><a href="<?=base_url()?>"><?=$site_name?></a></li>
+				<li><a href="<?=site_url('welcome/disclaimer')?>">Disclaimer</a></li>
+				<li><a href="<?=site_url('welcome/news')?>">Berita</a></li>
+				<li><a href="<?=base_url()?>">Contact Us</a></li>
+				<li><a href="<?=base_url()?>">About</a></li>
 			</ul>
 		</div>
 		<div id="copyright-container">
@@ -24,7 +26,7 @@
 		<div id="info" style="float:right"></div>		
 	</div>
 </div>
-<div id="container" style="float:left;width:60%">
+<div id="container" style="width:40%;margin:auto">
 	<div style="padding:5px">
 	    <div id="input-container" class="block">
 			<h2>Data Paket</h2>
@@ -41,7 +43,7 @@
 				<input id="destination-input" type="text" class="input"/>
 			</div>
 			<div style="padding:5px">
-				<label class="label-input">Validasi</label><br/>
+				<!--label class="label-input">Validasi</label><br/-->
 				<?php 
 					// echo $recaptcha;
 				?>
@@ -71,35 +73,6 @@
 				</div>
 			</div>
  			<div id="logistic-ouput-container" style="margin-top:20px"></div>
-		</div>
-	</div>
-</div>
-<div id="side-container" style="float:right;width:40%">
-	<div style="padding:5px">
-		<div class="block">
-			<h3>Disclaimer</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red">Berat minimum paket adalah 1(satu) kg.</p> 
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red">Pembulatan bobot paket ditentukan oleh perusahaan logistik.</p> 
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red">Perubahan harga ongkir dapat terjadi sewaktu-waktu tanpa pemberitahuan sebelumnya.</p> 
-		</div>
-	</div>
-	<div style="padding:5px">
-		<div id="news-container" class="block">
-			<h3>Berita</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0">Saat ini kami hanya melayani data pengiriman dari Jakarta.</p>
-			<p style="line-height:20px;margin: 10px 0 10px 0">Support untuk daerah asal lainnya segera.</p>
-		</div>
-	</div>
-	<div style="padding:5px">
-		<div class="block">
-			<h3>Anda dapat berpartisipasi</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0">Anda dapat mengirimkan request data pengiriman kepada kami. Silahkan kirimkan email ke admin@palingoke.info nama daerah asal dan tujuan selengkap-lengkapnya juga sertakan nama perusahaan jasa pengiriman yang Anda kehendaki.</p>
-		</div>
-	</div>
-	<div style="padding:5px">
-		<div class="block">
-			<h3>Kritik dan saran</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0">Anda dapat mengirimkan kritik dan saran. Silahkan kirimkan email ke admin@palingoke.info nama kritik dan saran Anda. Jika Anda melihat adanya kesalahan data pengiriman Anda juga dapat melaporkannya kepada kami melalui admin@palingoke.info.</p>
 		</div>
 	</div>
 </div>
