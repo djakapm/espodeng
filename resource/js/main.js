@@ -28,6 +28,7 @@
 	}
 
 	function recompose_cache_data(cache){
+		if(!cache){return;}
 		var temp = new Array();
 		var counter = 0;
 		for(var idx=0;idx<cache.length;idx++){
@@ -44,7 +45,7 @@
 		var container = $('#logistic-ouput-container');
 		var cache = container.data('cache');
 		var temp = recompose_cache_data(cache);
-
+		if(!temp){return;}
 		temp.sort(function(a,b){return parseFloat(a.total_price) - parseFloat(b.total_price);});
 	    logistic_service_result(container,temp,true);							
 		$('#result').show();
@@ -54,6 +55,7 @@
 		var container = $('#logistic-ouput-container');
 		var cache = container.data('cache');
 		var temp = recompose_cache_data(cache);
+		if(!temp){return;}
 		temp.sort(function(a,b){return parseFloat(a.delivery_time) - parseFloat(b.delivery_time);});
 	    logistic_service_result(container,temp,true);		
 		$('#result').show();
@@ -154,6 +156,14 @@
 		}
 	} 
 
+	function toggle_filter(current_filter_id,other_filter_ids){
+		$('#'+current_filter_id).removeClass('filter').addClass('active-filter');
+		var len = other_filter_ids.length;
+		for(var idx=0;idx<len;idx++){
+			$('#'+other_filter_ids[idx]).removeClass('active-filter').addClass('filter');			
+		}
+	}
+
 	var main = function(){
 		default_input_behaviour($('#weight'),'Kg?');
 		default_input_behaviour($('#origin-input'),'Kota asal?');
@@ -161,18 +171,17 @@
 		$('#origin-input').widedrop({id:'origin-input-selection'});
 		$('#destination-input').widedrop({id:'destination-input-selection'});
 		$('#cheapest-filter').click(function(e){
-			$(this).css('background-color','#FFD83C');
-			$(this).css('border','1px solid #FFB83C');
-			$('#fastest-filter').css('background-color','inherit');
-			$('#fastest-filter').css('border','inherit');
+			toggle_filter('cheapest-filter',['middle-filter','fastest-filter']);
+			clear_result();
+			the_cheapest_sort();
+		});
+		$('#middle-filter').click(function(e){
+			toggle_filter('middle-filter',['fastest-filter','cheapest-filter']);
 			clear_result();
 			the_cheapest_sort();
 		});
 		$('#fastest-filter').click(function(e){
-			$(this).css('background-color','#FFD83C');
-			$(this).css('border','1px solid #FFB83C');
-			$('#cheapest-filter').css('background-color','inherit');
-			$('#cheapest-filter').css('border','inherit');
+			toggle_filter('fastest-filter',['cheapest-filter','middle-filter']);
 			clear_result();
 			the_fastest_sort();
 		});

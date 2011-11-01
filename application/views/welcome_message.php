@@ -56,9 +56,11 @@
 			<div style="height:30px">
 				<div style="float:left"><h2>Hasil Pencarian</h2></div>
 				<div style="float:right;padding:5px">
-					<span id="cheapest-filter" style="-moz-border-radius:3px;border-radius:3px;padding:3px;cursor:pointer">Termurah</span>
+					<span id="cheapest-filter" class="round-block">Termurah</span>
 					&nbsp;
-					<span id="fastest-filter" style="-moz-border-radius:3px;border-radius:3px;padding:3px;cursor:pointer">Tercepat</span>
+					<span id="middle-filter" class="round-block">Paling OKE</span>
+					&nbsp;
+					<span id="fastest-filter" class="round-block">Tercepat</span>
 				</div>
 			</div>
 			<div id="result-container" style="margin-top:20px">
