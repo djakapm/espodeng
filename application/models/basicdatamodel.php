@@ -13,13 +13,12 @@ class BasicDataModel extends CI_Model {
     public function supported_origin($district_id){
     	$supported_origin_state_ids = array(4);
     	$is_supported = FALSE;
-    	$sql = 
-    	"select city.state_id
-    		from ongkir_ref_district district 
-			inner join ongkir_ref_city city on city.id = district.city_id
-			inner join ongkir_ref_state state on state.id = city.state_id
-			where district.id=$district_id";
-    	$query = $this->db->query($sql);
+    	$this->db->select('city.state_id');
+    	$this->db->from('ongkir_ref_district district');
+    	$this->db->join('ongkir_ref_city city','city.id = district.city_id','inner');
+    	$this->db->join('ongkir_ref_state state','state.id = city.state_id','inner');
+    	$this->db->where(array('district.id'=>$district_id));
+    	$query = $this->db->get();
     	foreach($query->result() as $row){
     		if(in_array($row->state_id,$supported_origin_state_ids)){
     			$is_supported = TRUE;
@@ -30,27 +29,26 @@ class BasicDataModel extends CI_Model {
     	return $is_supported;
     }
 
-    public function fulltext_search($text){
-    	$sql = 
-    	"select district.id district_id,district.name district_name,city.name city_name,state.name state_name 
-    		from ongkir_ref_district district 
-			inner join ongkir_ref_city city on city.id = district.city_id
-			inner join ongkir_ref_state state on state.id = city.state_id
-			where 
-			match(district.name) against('$text')";
-			$sql .= " limit 0, ".$this->fulltext_search_limit;
+    public function search_location($text){
+    	$this->db->select('district.id district_id,district.name district_name,city.name city_name,state.name state_name');
+    	$this->db->from('ongkir_ref_district district');
+    	$this->db->join('ongkir_ref_city city','city.id = district.city_id','inner');
+    	$this->db->join('ongkir_ref_state state','state.id = city.state_id','inner');
+    	$this->db->like('district.name',$text);
+    	$this->db->limit($this->fulltext_search_limit);
 
-		$fulltext_search_result = array();
-    	$query = $this->db->query($sql);
+
+		$search_result = array();
+    	$query = $this->db->get();
     	foreach($query->result() as $row){
-    		$fulltext_search_result[$row->district_id] = array($row->district_name,$row->city_name,$row->state_name);
+    		$search_result[$row->district_id] = array($row->district_name,$row->city_name,$row->state_name);
     	}
 
-    	return $fulltext_search_result;
+    	return $search_result;
     }
 
 	public function logistic_company(){
-		$query = $this->db->query('select * from ongkir_ref_logistic_company');
+		$query = $this->db->get('ongkir_ref_logistic_company');
 		$logistic_companies = array();
 		foreach ($query->result() as $row)
 		{
@@ -61,7 +59,7 @@ class BasicDataModel extends CI_Model {
 	}
 
 	public function country(){
-		$query = $this->db->query('select * from ongkir_ref_country');
+		$query = $this->db->get('ongkir_ref_country');
 		$countries = array();
 		foreach ($query->result() as $row)
 		{
@@ -73,11 +71,11 @@ class BasicDataModel extends CI_Model {
 
 	public function state($country_id){		
 		if(empty($country_id)){
-			$query = $this->db->query('select * from ongkir_ref_state');
+			$query = $this->db->get('ongkir_ref_state');
 			
 		}
 		else{
-			$query = $this->db->query('select * from ongkir_ref_state where country_id='.$country_id);			
+			$query = $this->db->get_where('ongkir_ref_state',array('country_id'=>$country_id));			
 		}
 
 		$states = array();
@@ -91,10 +89,10 @@ class BasicDataModel extends CI_Model {
 	
 	public function city($state_id){
 		if(empty($state_id)){
-			$query = $this->db->query('select * from ongkir_ref_city');
+			$query = $this->db->get('ongkir_ref_city');
 		}
 		else{
-			$query = $this->db->query('select * from ongkir_ref_city where state_id='.$state_id);
+			$query = $this->db->get_where('ongkir_ref_city',array('state_id'=>$state_id));
 		}
 
 		$cities = array();
@@ -108,10 +106,10 @@ class BasicDataModel extends CI_Model {
 
 	public function district($city_id){
 		if(empty($city_id)){
-			$query = $this->db->query('select * from ongkir_ref_district');
+			$query = $this->db->get('ongkir_ref_district');
 		}
 		else{
-			$query = $this->db->query('select * from ongkir_ref_district where city_id='.$city_id);
+			$query = $this->db->get_where('ongkir_ref_district',array('city_id'=>$city_id));
 		}
 
 		$districts = array();

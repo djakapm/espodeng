@@ -69,7 +69,7 @@ class Service extends CI_Controller {
 			echo json_encode(array());
 		}
 		else{
-			$result = $this->basicdata->fulltext_search($text);
+			$result = $this->basicdata->search_location($text);
 			$json_response = array();
 			foreach($result as $key => $value){
 				$json_response[] = array('id'=>$key,'text'=>humanize($value[0]).'('.humanize($value[1]).','.humanize($value[2]).')');
