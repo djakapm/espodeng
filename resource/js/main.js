@@ -41,6 +41,32 @@
 		return temp;
 	}
 
+	function the_middle_sort(){
+		var container = $('#logistic-ouput-container');
+		var cache = container.data('cache');
+		var temp = recompose_cache_data(cache);
+		if(!temp){return;}
+		var item_number = temp.length;
+		var sum_delivery_time = 0;
+		var sum_total_price = 0;
+		$.each(temp,function() {
+    		sum_delivery_time += parseFloat(this.delivery_time);
+		});
+
+		$.each(temp,function() {
+    		sum_total_price += parseFloat(this.total_price);
+		});
+
+		var avg_delivery_time = sum_delivery_time/item_number;
+		var avg_total_price = sum_total_price/item_number;
+
+		console.log('sum delivery time: '+sum_delivery_time);
+		console.log('sum total price: '+sum_total_price);
+		console.log('average delivery time: '+avg_delivery_time);
+		console.log('average total price: '+avg_total_price);
+		
+	}
+
 	function the_cheapest_sort(){
 		var container = $('#logistic-ouput-container');
 		var cache = container.data('cache');
@@ -135,7 +161,7 @@
 				
 			}
 			else{
-				div = '<div id="'+prefix+'-result-container-'+idx+'" style="padding:5px;margin-top:20px;background-color:#FFD83C;border: 1px solid #FFB83C">';				
+				div = '<div id="'+prefix+'-result-container-'+idx+'" style="padding:5px;margin-top:20px">';				
 			}
 				div += '<h3 id="'+prefix+'-result-info-'+idx+'">'+name+'</h3>';
 				div += '<h5 id="'+prefix+'-service-name-result-'+idx+'">'+service_name+'</h5>';
@@ -164,12 +190,22 @@
 		}
 	}
 
+	function origin_callback(item){
+		$('#origin-input').attr('data',item.id);
+	}
+
+	function destination_callback(item){
+		$('#destination-input').attr('data',item.id);
+	}
+
 	var main = function(){
+
+	$('#origin-input').jsonSuggest({url:'http://localhost/app/ongkir/index.php/service/place',onSelect:origin_callback});
+	$('#destination-input').jsonSuggest({url:'http://localhost/app/ongkir/index.php/service/place',onSelect:destination_callback});
+				
 		default_input_behaviour($('#weight'),'Kg?');
 		default_input_behaviour($('#origin-input'),'Kota asal?');
 		default_input_behaviour($('#destination-input'),'Kota tujuan?');
-		$('#origin-input').widedrop({id:'origin-input-selection'});
-		$('#destination-input').widedrop({id:'destination-input-selection'});
 		$('#cheapest-filter').click(function(e){
 			toggle_filter('cheapest-filter',['middle-filter','fastest-filter']);
 			clear_result();
@@ -178,7 +214,7 @@
 		$('#middle-filter').click(function(e){
 			toggle_filter('middle-filter',['fastest-filter','cheapest-filter']);
 			clear_result();
-			the_cheapest_sort();
+			the_middle_sort();
 		});
 		$('#fastest-filter').click(function(e){
 			toggle_filter('fastest-filter',['cheapest-filter','middle-filter']);

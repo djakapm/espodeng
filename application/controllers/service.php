@@ -63,7 +63,8 @@ class Service extends CI_Controller {
 			return;
 		}
 
-		$text = $_GET['q'];
+		// $text = $_GET['q'];
+		$text = $_GET['search'];
 		if(empty($text)){
 			echo json_encode(array());
 		}
@@ -71,7 +72,7 @@ class Service extends CI_Controller {
 			$result = $this->basicdata->fulltext_search($text);
 			$json_response = array();
 			foreach($result as $key => $value){
-				$json_response[$key] = '<span style="font-weight:bold">'.humanize($value[0]).'</span>&nbsp;('.humanize($value[1]).','.humanize($value[2].')');
+				$json_response[] = array('id'=>$key,'text'=>humanize($value[0]).'('.humanize($value[1]).','.humanize($value[2]).')');
 			}
 			echo json_encode($json_response);
 		}
