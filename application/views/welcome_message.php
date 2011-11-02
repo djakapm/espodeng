@@ -76,12 +76,12 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
+<!--script type="text/javascript">
   var RecaptchaOptions = { 
     theme:"<?= $theme ?>",
     lang:"<?= $lang ?>"
   };
-</script>
+</script-->
 <!--script type="text/javascript" src="<?= $server ?>/challenge?k=<?= $key.$errorpart ?>"></script>
 <noscript>
 		<iframe src="<?= $server ?>/noscript?lang=<?= $lang ?>&k=<?= $key.$errorpart ?>" height="300" width="500" frameborder="0"></iframe><br/>

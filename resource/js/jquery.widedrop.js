@@ -2,17 +2,14 @@
 $.fn.widedrop = function(options){  
    var self = this;
    var fill_data = function(data){
-         var position = $(self).position();
-         var top = position.top + $(self).height();
-         var left = position.left;
          var list;
 
          if($.find('#'+options.id).length > 0){
             $('#'+options.id).empty();
          }
          else{
-            list = '<ul id="'+options.id+'" style="border: 1px solid #DCDCDC;overflow:auto;position:fixed;left:'+left+'px;top:'+top+'px;background-color:#f5f5f5"></ul>';         list += '</ul>';
-            $('body').append(list);            
+            list = '<ul id="'+options.id+'" style="width:'+$(self).width()+'px;border: 1px solid #DCDCDC;background-color:#f5f5f5"></ul>';         
+            $(self).parent().append(list);            
          }
 
          $('#'+options.id).hide();
