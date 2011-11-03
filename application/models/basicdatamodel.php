@@ -2,7 +2,7 @@
 
 class BasicDataModel extends CI_Model {
 
-	var $fulltext_search_limit = 10;
+	var $search_limit = 10;
 
     function __construct()
     {
@@ -30,18 +30,16 @@ class BasicDataModel extends CI_Model {
     }
 
     public function search_location($text){
-    	$this->db->select('district.id district_id,district.name district_name,city.name city_name,state.name state_name');
-    	$this->db->from('ongkir_ref_district district');
-    	$this->db->join('ongkir_ref_city city','city.id = district.city_id','inner');
-    	$this->db->join('ongkir_ref_state state','state.id = city.state_id','inner');
-    	$this->db->like('district.name',$text);
-    	$this->db->limit($this->fulltext_search_limit);
+    	$this->db->select('id,name');
+    	$this->db->from('view_ongkir_location');
+    	$this->db->like('name',$text);
+    	$this->db->limit($this->search_limit);
 
 
 		$search_result = array();
     	$query = $this->db->get();
     	foreach($query->result() as $row){
-    		$search_result[$row->district_id] = array($row->district_name,$row->city_name,$row->state_name);
+    		$search_result[$row->id] = array($row->name);
     	}
 
     	return $search_result;

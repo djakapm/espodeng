@@ -200,12 +200,16 @@
 
 	var main = function(){
 
-	$('#origin-input').jsonSuggest({url:'http://localhost/app/ongkir/index.php/service/place',onSelect:origin_callback});
-	$('#destination-input').jsonSuggest({url:'http://localhost/app/ongkir/index.php/service/place',onSelect:destination_callback});
+	$('#origin-input').jsonSuggest({
+		url:'http://localhost/app/ongkir/index.php/service/place',minCharacters:3,onSelect:origin_callback
+	});
+	$('#destination-input').jsonSuggest({
+		url:'http://localhost/app/ongkir/index.php/service/place',minCharacters:3,onSelect:destination_callback
+	});
 				
 		default_input_behaviour($('#weight'),'Kg?');
-		default_input_behaviour($('#origin-input'),'Kota asal?');
-		default_input_behaviour($('#destination-input'),'Kota tujuan?');
+		default_input_behaviour($('#origin-input'),'Kota asal(Minimal 3 karakter)?');
+		default_input_behaviour($('#destination-input'),'Kota tujuan(Minimal 3 karakter)?');
 		$('#cheapest-filter').click(function(e){
 			toggle_filter('cheapest-filter',['middle-filter','fastest-filter']);
 			clear_result();
