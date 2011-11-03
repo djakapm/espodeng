@@ -9,7 +9,21 @@ class Updater extends CI_Controller {
 	}
 
 	public function index(){
-		$this->_update_district();
+		// $this->_insert_ref_location();
+	}
+
+	private function _insert_ref_location(){
+    	$this->db->select('district.id district_id,city.id city_id,state.id state_id');
+		$this->db->from('ongkir_logistic_service ols');
+    	$this->db->join('ongkir_ref_district district','district.id = ols.destination_id','inner');
+    	$this->db->join('ongkir_ref_city city','city.id = district.city_id','inner');
+    	$this->db->join('ongkir_ref_state state','state.id = city.state_id','inner');
+    	$query = $this->db->get();
+    	foreach($query->result() as $row){
+    		echo 'insert into ongkir_ref_location (district_id,city_id,state_id) values('.$row->district_id.','.$row->city_id.','.$row->state_id.')<br/>';
+    	}
+
+
 	}
 
 	private function _update_district(){

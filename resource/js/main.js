@@ -44,46 +44,27 @@
 	function the_middle_sort(){
 		var container = $('#logistic-ouput-container');
 		var cache = container.data('cache');
-		var temp = recompose_cache_data(cache);
-		if(!temp){return;}
-		var item_number = temp.length;
-		var sum_delivery_time = 0;
-		var sum_total_price = 0;
-		$.each(temp,function() {
-    		sum_delivery_time += parseFloat(this.delivery_time);
-		});
-
-		$.each(temp,function() {
-    		sum_total_price += parseFloat(this.total_price);
-		});
-
-		var avg_delivery_time = sum_delivery_time/item_number;
-		var avg_total_price = sum_total_price/item_number;
-
-		console.log('sum delivery time: '+sum_delivery_time);
-		console.log('sum total price: '+sum_total_price);
-		console.log('average delivery time: '+avg_delivery_time);
-		console.log('average total price: '+avg_total_price);
-		
+		if(!cache){return;}
+		cache.sort(function(a,b){return parseFloat(a.rank) - parseFloat(b.rank);});
+	    logistic_service_result(container,cache,true);							
+		$('#result').show();		
 	}
 
 	function the_cheapest_sort(){
 		var container = $('#logistic-ouput-container');
 		var cache = container.data('cache');
-		var temp = recompose_cache_data(cache);
-		if(!temp){return;}
-		temp.sort(function(a,b){return parseFloat(a.total_price) - parseFloat(b.total_price);});
-	    logistic_service_result(container,temp,true);							
+		if(!cache){return;}
+		cache.sort(function(a,b){return parseFloat(a.total_price) - parseFloat(b.total_price);});
+	    logistic_service_result(container,cache,true);							
 		$('#result').show();
 	}
 
 	function the_fastest_sort(){
 		var container = $('#logistic-ouput-container');
 		var cache = container.data('cache');
-		var temp = recompose_cache_data(cache);
-		if(!temp){return;}
-		temp.sort(function(a,b){return parseFloat(a.delivery_time) - parseFloat(b.delivery_time);});
-	    logistic_service_result(container,temp,true);		
+		if(!cache){return;}
+		cache.sort(function(a,b){return parseFloat(a.delivery_time) - parseFloat(b.delivery_time);});
+	    logistic_service_result(container,cache,true);		
 		$('#result').show();
 	}
 
@@ -93,21 +74,25 @@
 
 		var url = compose_url(origin_district_id,destination_district_id);
 
+		clear_result();
+		console.log(url);
 		$.getJSON(url,function(data){
+			console.log(data);
 			$('#result-info').text('');
 			if(data && data.status == 200){					
 				var container = $('#logistic-ouput-container');
-				clear_result();
 				$('#origin-result').html('Dari <b>'+data.origin+'</b>');
 				$('#destination-result').html('Ke <b>'+data.destination+'</b>');
 				$('#weight-result').html('Untuk paket dengan berat <b>'+parseFloat($('#weight').val())+' kg</b>');
 
-			    logistic_service_result(container,data.jne,false);
-			    logistic_service_result(container,data.tiki,false);
+			    logistic_service_result(container,data.results,false);
+			    // logistic_service_result(container,data.jne,false);
+			    // logistic_service_result(container,data.tiki,false);
 
-			    var cache = new Array();
-			    cache[0] = data.jne;
-			    cache[1] = data.tiki;
+			    // var cache = new Array();
+			    var cache = data.results;
+			    // cache[0] = data.jne;
+			    // cache[1] = data.tiki;
 
 			    container.data('cache',cache);
 				$('#result').show();
@@ -140,10 +125,10 @@
 	}
 
 	function logistic_service_result(container,logistics,sorted){
-		if(logistics.status == 404){return;}
 
 		for(var idx=0;idx<logistics.length;idx++){
 			var logistic = logistics[idx];
+			if(logistic.status == 404){return;}
 			var name = logistic.name.toUpperCase();
 			var prefix = logistic.name;
 			var service_name = logistic.service_name;

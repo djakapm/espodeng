@@ -8,8 +8,20 @@ class Service extends CI_Controller {
 	    $this->load->model('BasicDataModel','basicdata');
 	    $this->load->model('JNEModel','jne');
 	    $this->load->model('TIKIModel','tiki');
+	    $this->load->model('BusinessModel','business');
 	    $this->load->model('ValidationModel','validation');
 	    $this->load->helper('inflector');
+	}
+
+	public function index(){
+		$results = array(
+			array('name'=>'a','total_price'=>6000,'delivery_time'=>4),
+			array('name'=>'b','total_price'=>7500,'delivery_time'=>3),
+			array('name'=>'c','total_price'=>18000,'delivery_time'=>2),
+			array('name'=>'d','total_price'=>25000,'delivery_time'=>1)		
+		);
+		
+		print_r($this->business->logistic_rank($results));
 	}
 
 	public function _logistic_company(){
@@ -85,7 +97,7 @@ class Service extends CI_Controller {
 		// 	echo json_encode($json_response);	
 		// 	return;
 		// }
-
+		$results = array();
 		$origin_id = $_GET['o'];
 		$destination_id = $_GET['d'];
 		$weight = $_GET['w'];
@@ -106,14 +118,14 @@ class Service extends CI_Controller {
 				$jne_result = array('status'=>404,'message'=>'Not Found');			
 			}
 			else{
-				$jne_result = array();
+				$jne_result = array('status'=>200);
 
 				foreach($logistic_services as $logistic_service){
 					$service_name = $logistic_service['service_name'];
 					$delivery_time = $logistic_service['delivery_time'];
 					$unit_price = $logistic_service['unit_price'];
 					$total_price = $logistic_service['total_price'];
-					$jne_result[] = array(
+					$jne_result['data'][] = array(
 					'service_name'=>humanize($service_name),
 					'name'=>'jne',
 					'unit_price'=>$unit_price,
@@ -128,13 +140,13 @@ class Service extends CI_Controller {
 				$tiki_result = array('status'=>404,'message'=>'Not Found');			
 			}
 			else{
-				$tiki_result = array();
+				$tiki_result = array('status'=>200);
 				foreach($logistic_services as $logistic_service){
 					$service_name = $logistic_service['service_name'];
 					$delivery_time = $logistic_service['delivery_time'];
 					$unit_price = $logistic_service['unit_price'];
 					$total_price = $logistic_service['total_price'];
-					$tiki_result[] = array(
+					$tiki_result['data'][] = array(
 					'service_name'=>humanize($service_name),
 					'name'=>'tiki',
 					'unit_price'=>$unit_price,
@@ -143,10 +155,22 @@ class Service extends CI_Controller {
 				}
 			}
 
+			//Merge jne and tiki result
+			if($jne_result['status'] == 200){
+				$results = array_merge($results,$jne_result['data']);
+				
+			}
+			if($tiki_result['status'] == 200){
+				$results = array_merge($results,$tiki_result['data']);
+				
+			}
+
+			//Then do the ranking for 'paling ok'
+			$results = $this->business->logistic_rank($results);
+
 		$json_response = array(
 			'status'=>200,'message'=>'OK','origin'=>'Jakarta','destination'=>$destination->name,
-			'jne'=>$jne_result,
-			'tiki'=>$tiki_result
+			'results'=>$results
 			);			
 		}
 		else{
