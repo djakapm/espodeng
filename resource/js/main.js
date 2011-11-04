@@ -25,6 +25,9 @@
 		$('#result-destination').text('');
 		$('#logistic-ouput-container').empty();
 		$('#result').hide();								
+		$('#cheapest-filter').removeClass('active-filter');
+		$('#middle-filter').removeClass('active-filter');
+		$('#fastest-filter').removeClass('active-filter');
 	}
 
 	function recompose_cache_data(cache){
@@ -86,13 +89,8 @@
 				$('#weight-result').html('Untuk paket dengan berat <b>'+parseFloat($('#weight').val())+' kg</b>');
 
 			    logistic_service_result(container,data.results,false);
-			    // logistic_service_result(container,data.jne,false);
-			    // logistic_service_result(container,data.tiki,false);
 
-			    // var cache = new Array();
 			    var cache = data.results;
-			    // cache[0] = data.jne;
-			    // cache[1] = data.tiki;
 
 			    container.data('cache',cache);
 				$('#result').show();
@@ -108,6 +106,8 @@
 				}
 			}
 		});		
+
+
 	}
 
 	function clear_info(){
@@ -148,20 +148,18 @@
 			else{
 				div = '<div id="'+prefix+'-result-container-'+idx+'" style="padding:5px;margin-top:20px">';				
 			}
-				div += '<h3 id="'+prefix+'-result-info-'+idx+'">'+name+'</h3>';
-				div += '<h5 id="'+prefix+'-service-name-result-'+idx+'">'+service_name+'</h5>';
+				div += '<h3 id="'+prefix+'-result-info-'+idx+'"><span id="'+prefix+'-total-price-result-'+idx+'" style="font-size:inherit"></span>('+name+'&nbsp;'+service_name+')</h3>';
 				div += '<div id="'+prefix+'-result-'+idx+'" style="display:none">';
-				div += '<p id="'+prefix+'-unit-price-result-'+idx+'" style="margin:10px"></p>';
-				div += '<p id="'+prefix+'-delivery-time-result-'+idx+'" style="margin:10px;font-size:x-large;padding:5px"></p>';
-				div += '<p id="'+prefix+'-total-price-result-'+idx+'" style="margin:10px;font-size:x-large;padding:5px"></p>';
+				div += '<p id="'+prefix+'-delivery-time-result-'+idx+'" style="margin:5px;font-size:small"></p>';
+				div += '<p id="'+prefix+'-unit-price-result-'+idx+'" style="margin:5px;font-size:small"></p>';
 				div += '</div>';
 				div += '</div>';
 
 			container.append(div);
 
-			$('#'+prefix+'-unit-price-result-'+idx).text('Dengan harga per kilogram Rp. '+$.currency(unit_price,{s:',',d:'.',c:0}));
-			$('#'+prefix+'-delivery-time-result-'+idx).text('Lama Pengiriman '+delivery_time+' hari');
-			$('#'+prefix+'-total-price-result-'+idx).text('Total Biaya Rp. '+$.currency(total_price,{s:',',d:'.',c:0}));
+			$('#'+prefix+'-unit-price-result-'+idx).text('Harga per kilogram Rp. '+$.currency(unit_price,{s:',',d:'.',c:0}));
+			$('#'+prefix+'-delivery-time-result-'+idx).text('Waktu Pengiriman '+delivery_time+' hari');
+			$('#'+prefix+'-total-price-result-'+idx).text('Rp. '+$.currency(total_price,{s:',',d:'.',c:0}));
 			$('#'+prefix+'-result-'+idx).show();	
 			
 		}
@@ -176,7 +174,7 @@
 	}
 
 	function origin_callback(item){
-		$('#origin-input').attr('data',item.id);
+		$('#origin-input').attr('data',item.id);		
 	}
 
 	function destination_callback(item){
@@ -196,18 +194,18 @@
 		default_input_behaviour($('#origin-input'),'Kota asal(Minimal 3 karakter)?');
 		default_input_behaviour($('#destination-input'),'Kota tujuan(Minimal 3 karakter)?');
 		$('#cheapest-filter').click(function(e){
-			toggle_filter('cheapest-filter',['middle-filter','fastest-filter']);
 			clear_result();
+			toggle_filter('cheapest-filter',['middle-filter','fastest-filter']);
 			the_cheapest_sort();
 		});
 		$('#middle-filter').click(function(e){
-			toggle_filter('middle-filter',['fastest-filter','cheapest-filter']);
 			clear_result();
+			toggle_filter('middle-filter',['fastest-filter','cheapest-filter']);
 			the_middle_sort();
 		});
 		$('#fastest-filter').click(function(e){
-			toggle_filter('fastest-filter',['cheapest-filter','middle-filter']);
 			clear_result();
+			toggle_filter('fastest-filter',['cheapest-filter','middle-filter']);
 			the_fastest_sort();
 		});
 

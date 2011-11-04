@@ -23,25 +23,25 @@
 		</div>
 	</div>
 	<div id="site-title-container">
-		<div style="float:left"><h1 style="color:#000"><a href="#" style="text-decoration:none"><?=$site_title?></a></h1></div>
+		<div style="float:left"><h1><a href="#" style="text-decoration:none"><?=$site_title?></a></h1></div>
 		<div id="info" style="float:right"></div>		
 	</div>
 </div>
 <div id="container" style="width:40%;margin:auto">
 	<div style="padding:5px">
 	    <div id="input-container" class="block">
-			<h2>Data Paket</h2>
+			<h3>Data Paket</h3>
 			<div style="padding:5px">
-				<label class="label-input" for="weight">Berat</label><br/>
-				<input id="weight" type="text" class="number-input" size="4" maxlength="4"/>
+				<label for="weight">Berat</label><br/>
+				<input id="weight" type="text" class="number-input" style="text-align:center" size="4" maxlength="4"/>
 			</div>
 			<div id="origin" style="padding:5px">
-				<label class="label-input" for="origin-input">Dari</label><br/>
-				<input id="origin-input" type="text" class="input"/>
+				<label for="origin-input">Dari</label><br/>
+				<input id="origin-input" type="text" class="input" style="padding-left:5px;"/>
 	 		</div>
 			<div id="destination" style="padding:5px">
-				<label class="label-input" for="destination-input">Ke</label><br/>
-				<input id="destination-input" type="text" class="input"/>
+				<label for="destination-input">Ke</label><br/>
+				<input id="destination-input" type="text" class="input" style="padding-left:5px;"/>
 			</div>
 			<div style="padding:5px">
 				<!--label class="label-input">Validasi</label><br/-->
@@ -50,14 +50,14 @@
 				?>
 			</div>
 			<div style="padding:5px">
-				<button id="search-button" class="input">Cari</button>
+				<button id="search-button" style="height:50px;width:100%"><span style="font-size:large;color:white">Cari</span></button>
 			</div>
 		</div>	
 	</div>
 	<div style="padding:5px">
 		<div id="output-container" class="block">
 			<div style="height:30px">
-				<div style="float:left"><h2>Hasil Pencarian</h2></div>
+				<div style="float:left"><h3>Hasil Pencarian</h3></div>
 				<div style="float:right;padding:5px">
 					<span id="cheapest-filter" class="round-block">Termurah</span>
 					&nbsp;
@@ -66,14 +66,14 @@
 					<span id="fastest-filter" class="round-block">Tercepat</span>
 				</div>
 			</div>
-			<div id="result-container" style="margin-top:20px">
+<!-- 			<div id="result-container" style="margin-top:20px">
 				<div id="result" style="display:none">
 					<p id="origin-result" style="margin:10px"></p>
 					<p id="destination-result" style="margin:10px"></p>
 					<p id="weight-result" style="margin:10px"></p>
 				</div>
 			</div>
- 			<div id="logistic-ouput-container" style="margin-top:20px"></div>
+ --> 			<div id="logistic-ouput-container" style="margin-top:20px"></div>
 		</div>
 	</div>
 </div>
