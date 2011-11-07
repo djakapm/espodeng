@@ -29,24 +29,25 @@
 </div>
 <div id="container" style="width:40%;margin:auto">
 	<div style="padding:5px">
+		<form id="input-form">
 	    <div id="input-container" class="block">
 			<h3>Data Paket</h3>
-			<div style="padding:5px">
-				<label for="weight">Berat</label><br/>
-				<input id="weight" type="text" class="number-input" style="text-align:center" size="4" maxlength="4"/>
-			</div>
 			<div id="origin" style="padding:5px">
 				<label for="origin-input">Dari</label><br/>
-				<input id="origin-input" type="text" class="input" style="padding-left:5px;"/>
+				<input id="origin-input" name="origin-input" type="text" class="input" style="padding-left:5px;"/>
 	 		</div>
 			<div id="destination" style="padding:5px">
 				<label for="destination-input">Ke</label><br/>
-				<input id="destination-input" type="text" class="input" style="padding-left:5px;"/>
+				<input id="destination-input" name="destination-input" type="text" class="input" style="padding-left:5px;"/>
 			</div>
 			<div style="padding:5px">
-				<!--label class="label-input">Validasi</label><br/-->
+				<label for="weight">Berat</label><br/>
+				<input id="weight" name="weight" type="text" value="1" class="number-input" style="text-align:center" size="4" maxlength="4"/>
+			</div>
+			<div style="padding:5px">
+				<label class="label-input">Validasi</label><br/>
 				<?php 
-					// echo $recaptcha;
+					echo $recaptcha;
 				?>
 			</div>
 			<div style="padding:5px">
@@ -66,14 +67,7 @@
 					<span id="fastest-filter" class="round-block">Tercepat</span>
 				</div>
 			</div>
-<!-- 			<div id="result-container" style="margin-top:20px">
-				<div id="result" style="display:none">
-					<p id="origin-result" style="margin:10px"></p>
-					<p id="destination-result" style="margin:10px"></p>
-					<p id="weight-result" style="margin:10px"></p>
-				</div>
-			</div>
- --> 			<div id="logistic-ouput-container" style="margin-top:20px"></div>
+ 			<div id="logistic-ouput-container" style="margin-top:20px"></div>
 		</div>
 	</div>
 </div>

@@ -11,6 +11,8 @@ class Service extends CI_Controller {
 	    $this->load->model('BusinessModel','business');
 	    $this->load->model('ValidationModel','validation');
 	    $this->load->helper('inflector');
+	    $this->load->library('recaptcha');
+
 	}
 
 	public function index(){
@@ -23,6 +25,36 @@ class Service extends CI_Controller {
 		
 		print_r($this->business->logistic_rank($results));
 	}
+
+	public function validate(){
+		$data = array();
+		$data['site_name'] = 'palingoke.info';
+		$data['site_title'] = 'Ongkir Paling Oke';
+		$response = $this->input->post('recaptcha_response_field');
+
+	    if ($this->check_captcha($response)) 
+	    {
+	    	$origin_id = $this->input->post('o');
+	    	$destination_id = $this->input->post('d');
+	    	$weight = $this->input->post('w');
+	    	$this->price($origin_id,$destination_id,$weight);
+	    }
+	    else
+	    {
+	    	echo json_encode(array('status'=>401,'message'=>'Captcha input is invalid'));
+	    }
+		
+	}
+
+	function check_captcha($val) {
+	  $original_val = $this->input->post('recaptcha_challenge_field');
+	  if ($this->recaptcha->check_answer($this->input->ip_address(),$original_val,$val)) {
+	    return TRUE;
+	  } else {
+	    return FALSE;
+	  }
+	}
+
 
 	public function _logistic_company(){
 		$logistic_companies =$this->basicdata->logistic_company();
@@ -90,17 +122,11 @@ class Service extends CI_Controller {
 		}
 	}
 
-	public function price(){
-		// $recaptcha_answer = $_GET['r'];
-		// if(!$this->security->check_captcha($recaptcha_answer)){
-		// 	$json_response = array('status'=>401,'message'=>'Unauthorized');
-		// 	echo json_encode($json_response);	
-		// 	return;
-		// }
+	public function price($origin_id='',$destination_id='',$weight=1){
 		$results = array();
-		$origin_id = $_GET['o'];
-		$destination_id = $_GET['d'];
-		$weight = $_GET['w'];
+		// $origin_id = $_GET['o'];
+		// $destination_id = $_GET['d'];
+		// $weight = $_GET['w'];
 		$origin = $this->basicdata->load_district($origin_id);
 		$destination = $this->basicdata->load_district($destination_id);
 

@@ -30,16 +30,21 @@ class BasicDataModel extends CI_Model {
     }
 
     public function search_location($text){
-    	$this->db->select('id,name');
+    	$this->db->select('id,district_name,city_name,state_name');
     	$this->db->from('view_ongkir_location');
-    	$this->db->like('name',$text);
+    	$this->db->like('district_name',$text);
+    	$this->db->or_like('city_name',$text);
+    	$this->db->or_like('state_name',$text);
     	$this->db->limit($this->search_limit);
 
 
 		$search_result = array();
     	$query = $this->db->get();
     	foreach($query->result() as $row){
-    		$search_result[$row->id] = array($row->name);
+    		$district_name = $row->district_name;
+    		$city_name = $row->city_name;
+    		$state_name = $row->state_name;
+    		$search_result[$row->id] = array($district_name.' ('.$city_name.','.$state_name.')');
     	}
 
     	return $search_result;

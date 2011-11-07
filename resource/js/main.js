@@ -1,3 +1,5 @@
+var base_url = 'http://localhost/app/ongkir/';
+
 	function default_input_behaviour(input,default_string){
 		input.val(default_string);
 		input.focus(function(event){
@@ -14,7 +16,7 @@
 	function compose_url(origin_id,destination_id){
 		var weight = $('#weight').val();
 		// var recaptcha_answer = $('textarea[name=recaptcha_challenge_field]').val();
-		var url = 'http://localhost/app/ongkir/index.php/service/price?o='+origin_id+'&d='+destination_id+'&w='+weight;
+		var url = base_url+'index.php/service/price?o='+origin_id+'&d='+destination_id+'&w='+weight;
 		// +'&r='+recaptcha_answer;
 
 		return url;
@@ -71,22 +73,12 @@
 		$('#result').show();
 	}
 
-	function search_action(){
-		var origin_district_id = $('#origin-input').attr('data');
-		var destination_district_id = $('#destination-input').attr('data');
 
-		var url = compose_url(origin_district_id,destination_district_id);
-
+	function authorized(data){
 		clear_result();
-		console.log(url);
-		$.getJSON(url,function(data){
 			console.log(data);
 			$('#result-info').text('');
-			if(data && data.status == 200){					
 				var container = $('#logistic-ouput-container');
-				$('#origin-result').html('Dari <b>'+data.origin+'</b>');
-				$('#destination-result').html('Ke <b>'+data.destination+'</b>');
-				$('#weight-result').html('Untuk paket dengan berat <b>'+parseFloat($('#weight').val())+' kg</b>');
 
 			    logistic_service_result(container,data.results,false);
 
@@ -94,19 +86,42 @@
 
 			    container.data('cache',cache);
 				$('#result').show();
-			}
-			else{
-				if(data && data.status == 400){
-					clear_result();
-					show_warning('Maaf untuk saat ini Kami hanya melayani pengiriman dari Jakarta.');
-				}
-				if(data && data.status == 401){
-					clear_result();
-					show_error('Maaf validasi captcha tidak berhasil, silahkan ketik ulang.');
-				}
-			}
-		});		
+	}
 
+	function unauthorized(){
+		clear_result();
+		show_error('Maaf validasi captcha tidak berhasil, silahkan ketik ulang.');
+	}
+
+	function search_action(){
+		var origin_district_id = $('#origin-input').attr('data');
+		var destination_district_id = $('#destination-input').attr('data');
+
+		var url = compose_url(origin_district_id,destination_district_id);
+
+		var params = $('#input-form').serialize()+'&o='+origin_district_id+'&d='+destination_district_id+'&w='+$('#weight').val();
+
+		$.post(base_url+'index.php/service/validate',params,function(data){
+			var json_response = $.parseJSON(data);
+			if(!json_response){
+				clear_result();
+				show_error('Invalid response');				
+			}
+			else
+			if(json_response.status == 200){
+				authorized(json_response);
+			}
+			else
+			if(json_response.status == 401){
+				unauthorized();			
+			}
+			else
+			if(json_response.status == 400){
+				clear_result();
+				show_warning('Maaf untuk saat ini Kami hanya melayani pengiriman dari Jakarta.');
+			}
+		});
+		Recaptcha.reload();
 
 	}
 
@@ -148,7 +163,7 @@
 			else{
 				div = '<div id="'+prefix+'-result-container-'+idx+'" style="padding:5px;margin-top:20px">';				
 			}
-				div += '<h3 id="'+prefix+'-result-info-'+idx+'"><span id="'+prefix+'-total-price-result-'+idx+'" style="font-size:inherit"></span>('+name+'&nbsp;'+service_name+')</h3>';
+				div += '<h3 id="'+prefix+'-result-info-'+idx+'"><span id="'+prefix+'-total-price-result-'+idx+'" style="font-size:inherit"></span> ('+name+'&nbsp;'+service_name+')</h3>';
 				div += '<div id="'+prefix+'-result-'+idx+'" style="display:none">';
 				div += '<p id="'+prefix+'-delivery-time-result-'+idx+'" style="margin:5px;font-size:small"></p>';
 				div += '<p id="'+prefix+'-unit-price-result-'+idx+'" style="margin:5px;font-size:small"></p>';
@@ -181,18 +196,45 @@
 		$('#destination-input').attr('data',item.id);
 	}
 
+	function valid_input(){
+
+
+		if(!$('#origin-input').attr('data')){
+			show_error('Silahkan isi daerah asal.');
+			return false;
+		}
+
+		if(!$('#destination-input').attr('data')){
+			show_error('Silahkan isi daerah tujuan.');
+			return false;
+		}
+
+		if(!parseFloat($('#weight').val())){
+				show_error('Silahkan isi berat paket.');
+				return false;
+		}
+
+		if(!$('input[name=recaptcha_response_field]').val()){
+			show_error('Silahkan isi validasi sesuai dengan gambar.');
+			return false;
+		}
+
+		return true;
+		
+	}
+
 	var main = function(){
 
 	$('#origin-input').jsonSuggest({
-		url:'http://localhost/app/ongkir/index.php/service/place',minCharacters:3,onSelect:origin_callback
+		url:base_url+'index.php/service/place',minCharacters:3,onSelect:origin_callback
 	});
 	$('#destination-input').jsonSuggest({
-		url:'http://localhost/app/ongkir/index.php/service/place',minCharacters:3,onSelect:destination_callback
+		url:base_url+'index.php/service/place',minCharacters:3,onSelect:destination_callback
 	});
 				
-		default_input_behaviour($('#weight'),'Kg?');
-		default_input_behaviour($('#origin-input'),'Kota asal(Minimal 3 karakter)?');
-		default_input_behaviour($('#destination-input'),'Kota tujuan(Minimal 3 karakter)?');
+	default_input_behaviour($('#origin-input'),'Kota asal(Minimal 3 karakter)?');
+	default_input_behaviour($('#destination-input'),'Kota tujuan(Minimal 3 karakter)?');
+
 		$('#cheapest-filter').click(function(e){
 			clear_result();
 			toggle_filter('cheapest-filter',['middle-filter','fastest-filter']);
@@ -210,35 +252,16 @@
 		});
 
 
+		$('#input-form').submit(function(event){
+			 event.preventDefault(); 
+		});
 
 
-			$('#search-button').click(function(){
-				if(!parseFloat($('#weight').val())){
-					show_error('Silahkan isi berat paket.');
-					return false;
-				}
-				else{
-					clear_info();
-				}
-
-			if(!$('#origin-input').attr('data')){
-				show_error('Silahkan isi daerah asal.');
-				return false;
-			}
-			else{
+		$('#search-button').click(function(){
+			if(valid_input()){
 				clear_info();
+				search_action();			
 			}
-
-			if(!$('#destination-input').attr('data')){
-				show_error('Silahkan isi daerah tujuan.');
-				return false;
-			}
-			else{
-				clear_info();
-			}
-
-
-			search_action();
 		});
 	}
 	
