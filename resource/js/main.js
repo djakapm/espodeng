@@ -15,9 +15,7 @@ var base_url = 'http://localhost/app/ongkir/';
 
 	function compose_url(origin_id,destination_id){
 		var weight = $('#weight').val();
-		// var recaptcha_answer = $('textarea[name=recaptcha_challenge_field]').val();
 		var url = base_url+'index.php/service/price?o='+origin_id+'&d='+destination_id+'&w='+weight;
-		// +'&r='+recaptcha_answer;
 
 		return url;
 	}

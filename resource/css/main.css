@@ -25,7 +25,7 @@ h1 > a{
 		color: #444;
 		margin: 0 0 0 0;
 		padding: 0 0 0 0;
-                font-weight: 100;	
+        font-weight: 100;	
 }
 
 h1{
@@ -36,18 +36,18 @@ h1{
 		color: #444;
 		margin: 0 0 0 0;
 		padding: 0 0 0 0;
-                font-weight: 100;	
+        font-weight: 100;	
 }
 
 h3{
-	font-family: Helvetica,times, "Times New Roman", times-roman, georgia, serif;
+		font-family: Helvetica,times, "Times New Roman", times-roman, georgia, serif;
 		font-size: 28px;
 		line-height: 40px;
 		letter-spacing: -1px;color: #444;
 }
 
 p{
-	 font-family: Helvetica,times, "Times New Roman", times-roman, georgia, serif;
+	 	font-family: Helvetica,times, "Times New Roman", times-roman, georgia, serif;
 		font-size: 14px;
 		line-height: 20px;
 		text-transform: uppercase;
@@ -55,8 +55,8 @@ p{
 }
 
 span{
- font-family: Helvetica,times, "Times New Roman", times-roman, georgia, serif;
- font-size: 14px;
+ 		font-family: Helvetica,times, "Times New Roman", times-roman, georgia, serif;
+ 		font-size: 14px;
 		line-height: 20px;
 		text-transform: uppercase;
 		color: #444;	
@@ -64,7 +64,7 @@ span{
 
 
 li{
-	 font-family: Helvetica, times, "Times New Roman", times-roman, georgia, serif;
+	 	font-family: Helvetica, times, "Times New Roman", times-roman, georgia, serif;
 		font-size: 14px;
 		line-height: 20px;
 		text-transform: uppercase;
@@ -72,7 +72,7 @@ li{
 }
 
 label{
-	 font-family: Helvetica,times, "Times New Roman", times-roman, georgia, serif;
+	 	font-family: Helvetica,times, "Times New Roman", times-roman, georgia, serif;
 		font-size: 14px;
 		line-height: 20px;
 		text-transform: uppercase;
@@ -80,7 +80,7 @@ label{
 }
 
 input{
-	 font-family: Helvetica,times, Times New Roman, times-roman, georgia, serif;
+	 	font-family: Helvetica,times, Times New Roman, times-roman, georgia, serif;
 		font-size: 14px;
 		line-height: 20px;
 		text-transform: uppercase;

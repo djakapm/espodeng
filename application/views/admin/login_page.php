@@ -14,8 +14,8 @@
 				<li><a href="<?=base_url()?>"><?=$site_name?></a></li>
 				<li><a href="<?=site_url('welcome/disclaimer')?>">Disclaimer</a></li>
 				<li><a href="<?=site_url('welcome/news')?>">Berita</a></li>
-				<li><a href="<?=base_url()?>">Contact Us</a></li>
-				<li><a href="<?=base_url()?>">About</a></li>
+				<li><a href="<?=site_url('welcome/contactus')?>">Contact Us</a></li>
+				<li><a href="<?=site_url('welcome/about')?>">About</a></li>
 			</ul>
 		</div>
 		<div id="copyright-container">
@@ -32,12 +32,22 @@
 </div>
 <div id="container" style="width:40%;margin:auto">
 	<div style="padding:5px">
-		<div class="block">
-			<h3>Disclaimer</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Berat minimum paket adalah 1(satu) kg.</p> 
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Pembulatan bobot paket ditentukan oleh perusahaan logistik.</p> 
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Perubahan harga ongkir dapat terjadi sewaktu-waktu tanpa pemberitahuan sebelumnya.</p> 
-		</div>
+	    <div class="block">
+			<h3>Login</h3>
+			<form id="login-form" method="post" action="<?=site_url('admin/validate')?>">
+			<div style="padding:5px">
+				<label for="login-input">Login ID</label><br/>
+				<input id="login-input" name="login-input" type="text" class="input" style="padding-left:5px;"/>
+	 		</div>
+			<div style="padding:5px">
+				<label for="destination-input">Password</label><br/>
+				<input id="password-input" name="password-input" type="password" class="input" style="padding-left:5px;"/>
+			</div>
+			<div style="padding:5px">
+				<input type="submit" id="login-button" style="height:50px;width:30%" value="Login"/>
+			</div>
+			</form>
+		</div>	
 	</div>
 </div>
 </body>

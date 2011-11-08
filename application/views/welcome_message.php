@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<title><?=$site_name?></title>
-	<link rel="stylesheet" href="resource/css/main.css"/>	
-	<link rel="stylesheet" href="resource/css/jquery-ui-1.8.9.custom.css"/>	
+	<link rel="stylesheet" href="<?=base_url()?>resource/css/main.css"/>	
+	<link rel="stylesheet" href="<?=base_url()?>resource/css/jquery-ui-1.8.9.custom.css"/>	
 </head>
 <body>
 <div id="top-fixed-container">
@@ -14,8 +14,9 @@
 				<li><a href="<?=base_url()?>"><?=$site_name?></a></li>
 				<li><a href="<?=site_url('welcome/disclaimer')?>">Disclaimer</a></li>
 				<li><a href="<?=site_url('welcome/news')?>">Berita</a></li>
-				<li><a href="<?=base_url()?>">Contact Us</a></li>
-				<li><a href="<?=base_url()?>">About</a></li>
+				<li><a href="<?=site_url('welcome/contactus')?>">Contact Us</a></li>
+				<li><a href="<?=site_url('welcome/about')?>">About</a></li>
+				<li><a href="<?=site_url('admin/login')?>">Login</a></li>
 			</ul>
 		</div>
 		<div id="copyright-container">
@@ -23,7 +24,10 @@
 		</div>
 	</div>
 	<div id="site-title-container">
-		<div style="float:left"><h1><a href="#" style="text-decoration:none"><?=$site_title?></a></h1></div>
+		<div style="float:left">
+			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="100" height="100"/> 
+			<h1><a href="#" style="text-decoration:none"><?=$site_title?></a></h1>
+		</div>
 		<div id="info" style="float:right"></div>		
 	</div>
 </div>
@@ -71,9 +75,9 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript" src="resource/js/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="resource/js/jquery.jsonSuggest-2.min.js"></script>
-<script type="text/javascript" src="resource/js/jquery.currency.min.js"></script>
-<script type="text/javascript" src="resource/js/main.js"></script>
+<script type="text/javascript" src="<?=base_url()?>resource/js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>resource/js/jquery.jsonSuggest-2.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>resource/js/jquery.currency.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>resource/js/main.js"></script>
 </body>
 </html>
