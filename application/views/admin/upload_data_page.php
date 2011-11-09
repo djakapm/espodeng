@@ -49,26 +49,95 @@
 			</div>
 		</form>
 		</div>
-		<div style="padding:5px">
-		<?php if(!empty($current_file)){ ?>
-		<p>Current processed file: <?=$current_file?></p>
-		<?php } ?>
-		</div>
-		<div style="padding:5px">
-			<table>
-			<?php
-				if(!empty($csv_data))
-				foreach($csv_data as $csv_datum){
-			?>
-				<tr>
-					<td><?=$csv_datum[0]?></td>
-					<td><?=$csv_datum[1]?></td>
-					<td><?=$csv_datum[2]?></td>
-					<td><?=$csv_datum[3]?></td>
-				</tr>
+
+		<form method="post" action="<?=site_url('admin/process_data')?>">
+			<div style="padding:5px">
+				<?php if(!empty($logistic_companies)){?>
+				<label>Logistic Company</label><br/>
+				<?=form_dropdown('logistic_company',$logistic_companies)?>
+				<?php } ?>
+			</div>
+			<div style="padding:5px">
+				<?php if(!empty($logistic_service_types)){?>
+				<label>Logistic Service Type</label><br/>
+				<?=form_dropdown('logistic_service_type',$logistic_service_types)?>
+				<?php } ?>
+			</div>
+			<div style="padding:5px">
+			<?php if(!empty($current_file)){ ?>
+			<p>Current processed file: <?=$current_file?></p>
 			<?php } ?>
-			</table>
-		</div>		
+			</div>
+			<div style="padding:5px">
+				<table>
+				<thead>
+					<tr>
+						<th><?=form_checkbox('', '')?>Proses?</th>
+						<th>No.</th>
+						<th>Daerah</th>
+						<th>Harga Per Kg</th>
+						<th>Harga Per Kg Berikutnya</th>
+						<th>Lama Pengiriman</th>
+						<th>Daerah Tebakan</th>				
+					</tr>
+				</thead>
+				<tbody>
+				<?php
+				    $no = 1;
+				    $idx = 0;
+					if(!empty($csv_data))
+					foreach($csv_data as $csv_datum){
+						$district = (empty($csv_datum[0]) ? '-' : $csv_datum[0]);
+						$unit_price = (empty($csv_datum[1]) ? '-' : $csv_datum[1]);
+						$next_unit_price = (empty($csv_datum[2]) ? '-' : $csv_datum[2]);
+						$delivery_time = (empty($csv_datum[3]) ? '-' : $csv_datum[3]);
+						$guessed_districts = $csv_datum[4];
+				?>
+						<?php if(!empty($guessed_districts)){?>
+							<tr>
+								<td><?=form_checkbox('selected_data[]',$idx,true)?></td>
+								<td style="text-align:justify"><?=$no?></td>
+								<td style="text-align:justify"><?=$district?></td>
+								<td style="text-align:right"><?=$unit_price?></td>
+								<td style="text-align:right"><?=$next_unit_price?></td>
+								<td style="text-align:right"><?=$delivery_time?></td>
+								<td style="text-align:right">
+									<?=form_dropdown('guessed_district[]',$guessed_districts)?>
+								</td>
+								<?=form_hidden('unit_price[]', $unit_price)?>
+								<?=form_hidden('next_unit_price[]', $next_unit_price)?>
+								<?=form_hidden('delivery_time[]', $delivery_time)?>
+							</tr>
+
+						<?php 
+							$idx++;
+						} else{
+						?>
+					<tr style="background-color:red">
+						<td>&nbsp;</td>
+						<td style="text-align:justify"><?=$no?></td>
+						<td style="text-align:justify"><?=$district?></td>
+						<td style="text-align:right"><?=$unit_price?></td>
+						<td style="text-align:right"><?=$next_unit_price?></td>
+						<td style="text-align:right"><?=$delivery_time?></td>
+						<td style="text-align:right">
+							Tidak ditemukan
+						</td>
+					</tr>
+						<?php } ?>
+
+				<?php 
+						$no++;
+					} 
+				?>
+				</tbody>
+				</table>
+			</div>		
+			<div style="padding:5px">
+				<input type="submit" id="process-button" style="height:50px;width:30%" value="Proses Data Terpilih"/>
+			</div>
+
+		</form>
 	</div>
 </div>
 </body>

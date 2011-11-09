@@ -50,6 +50,21 @@ class BasicDataModel extends CI_Model {
     	return $search_result;
     }
 
+	public function logistic_service_type(){
+
+		$this->db->select('orst.id as id,orlc.name as company_name ,orst.name as service_type_name');
+		$this->db->from('ongkir_ref_service_type orst');
+		$this->db->join('ongkir_ref_logistic_company orlc','orlc.id = orst.company_id','inner');
+		$query = $this->db->get();
+		$logistic_service_types = array();
+		foreach ($query->result() as $row)
+		{
+			$logistic_service_types[] = $row;
+		}
+		
+		return $logistic_service_types;
+	}
+
 	public function logistic_company(){
 		$query = $this->db->get('ongkir_ref_logistic_company');
 		$logistic_companies = array();
