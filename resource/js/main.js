@@ -222,10 +222,13 @@ var base_url = 'http://localhost/app/ongkir/';
 	}
 
 	var main = function(){
-
+	 
+	if($.find('#origin-input').length > 0)	
 	$('#origin-input').jsonSuggest({
 		url:base_url+'index.php/service/place',minCharacters:3,onSelect:origin_callback
 	});
+
+	if($.find('#destination-input').length > 0)
 	$('#destination-input').jsonSuggest({
 		url:base_url+'index.php/service/place',minCharacters:3,onSelect:destination_callback
 	});

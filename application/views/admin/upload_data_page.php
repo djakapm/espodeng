@@ -36,6 +36,7 @@
 			<h3>Upload Data</h3>
 			<ul>
 				<li><a href="<?=site_url('admin/landing')?>">Operations</a></li>
+				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
 			</ul>
 		</div>
 		<div class="block">
@@ -51,6 +52,12 @@
 		</div>
 
 		<form method="post" action="<?=site_url('admin/process_data')?>">
+			<div style="padding:5px">
+				<?php if(!empty($origin_districts)){?>
+				<label>Origin District</label><br/>
+				<?=form_dropdown('origin_district',$origin_districts)?>
+				<?php } ?>
+			</div>
 			<div style="padding:5px">
 				<?php if(!empty($logistic_companies)){?>
 				<label>Logistic Company</label><br/>
@@ -69,60 +76,120 @@
 			<?php } ?>
 			</div>
 			<div style="padding:5px">
-				<table>
+				<?=form_checkbox('replace_data','replace',true,'id="replace_data"')?>
+				<label for="replace_data">Create or Replace Data</label>
+			</div>
+			<div style="padding:5px">
+				<?=form_radio('logistic-filter','filtered',true,'id="logistic-filter-all"')?>
+				<label for="logistic-filter-all">All District</label>
+				<?=form_radio('logistic-filter','filtered',false,'id="logistic-filter-ambigous"')?>
+				<label for="logistic-filter-ambigous">Ambigous Districts</label>
+
+			</div>
+			<div style="padding:5px">
+				<input type="submit" id="process-button" style="height:50px;width:30%" value="Process Selected Data"/>
+				</div>			
+			<div style="padding:5px">
+				<table id="logistic-data" class="data" style="width:940px;table-layout:fixed">
 				<thead>
-					<tr>
-						<th><?=form_checkbox('', '')?>Proses?</th>
+					<col width="30">
+					<col width="40">
+					<col width="200">
+					<col width="30%">
+					<col width="70%">
+					<col width="60">
+					<col width="60">
+					<col width="60">
+					<tr style="height:50px">
+						<th><?=form_checkbox('', '')?></th>
 						<th>No.</th>
-						<th>Daerah</th>
-						<th>Harga Per Kg</th>
-						<th>Harga Per Kg Berikutnya</th>
-						<th>Lama Pengiriman</th>
-						<th>Daerah Tebakan</th>				
+						<th>City</th>
+						<th>District</th>
+						<th>Guessed District</th>				
+						<th title="Unit Price">UP(Rp)</th>
+						<th title="Next Unit Price">NUP(Rp)</th>
+						<th title="Delivery Time">DT(Hari)</th>
 					</tr>
 				</thead>
 				<tbody>
 				<?php
 				    $no = 1;
 				    $idx = 0;
+				    $even = false;
 					if(!empty($csv_data))
 					foreach($csv_data as $csv_datum){
-						$district = (empty($csv_datum[0]) ? '-' : $csv_datum[0]);
-						$unit_price = (empty($csv_datum[1]) ? '-' : $csv_datum[1]);
-						$next_unit_price = (empty($csv_datum[2]) ? '-' : $csv_datum[2]);
-						$delivery_time = (empty($csv_datum[3]) ? '-' : $csv_datum[3]);
-						$guessed_districts = $csv_datum[4];
+						$i = 0;
+						$even = ($no % 2) == 0;
+						$country = (empty($csv_datum[$i]) ? '-' : $csv_datum[$i]);
+						$i++;
+						$state = (empty($csv_datum[$i]) ? '-' : $csv_datum[$i]);
+						$i++;
+						$city = (empty($csv_datum[$i]) ? '-' : $csv_datum[$i]);
+						$i++;
+						$district = (empty($csv_datum[$i]) ? '-' : $csv_datum[$i]);
+						$i++;
+						$unit_price = (empty($csv_datum[$i]) ? '0' : $csv_datum[$i]);
+						$i++;
+						$next_unit_price = (empty($csv_datum[$i]) ? '0' : $csv_datum[$i]);
+						$i++;
+						$delivery_time = (empty($csv_datum[$i]) ? '0' : $csv_datum[$i]);
+						$i++;
+						if(!empty($csv_datum[$i])){
+							$guessed_districts = $csv_datum[$i];
+							$multi_district = count($guessed_districts) > 1;							
+						}
 				?>
 						<?php if(!empty($guessed_districts)){?>
-							<tr>
+						<?php if($multi_district){?>
+							<tr class="ambigous" style="height:30px;background-color:orange">
+						<?php }else{?>
+							<tr class="exact" style="height:30px;background-color:<?=($even ? '#ccc' : '#fff' )?>">
+						<?php }?>
 								<td><?=form_checkbox('selected_data[]',$idx,true)?></td>
-								<td style="text-align:justify"><?=$no?></td>
-								<td style="text-align:justify"><?=$district?></td>
-								<td style="text-align:right"><?=$unit_price?></td>
-								<td style="text-align:right"><?=$next_unit_price?></td>
-								<td style="text-align:right"><?=$delivery_time?></td>
-								<td style="text-align:right">
-									<?=form_dropdown('guessed_district[]',$guessed_districts)?>
-								</td>
+								<td style="text-align:left"><?=$no?></td>
+								<td style="text-align:left"><?=$city?></td>
+								<td style="text-align:left"><?=$district?></td>
+
+								<?php if($multi_district){?>
+									<td style="padding-top:5px">
+										<?php $guessed_districts[-1] = 'Pilih nama daerah...'; ksort($guessed_districts);?>
+										<?=form_dropdown('guessed_district[]',$guessed_districts)?>
+										<?=form_hidden('ambigous_city[]',$city)?>
+										<?=form_hidden('ambigous_district[]',$district)?>
+
+									</td>
+								<?php } else {?>
+									<td style="text-align:left">
+										<span style="font-size:12px"><?=$guessed_districts[key($guessed_districts)]?></span>
+										<?=form_hidden('guessed_district[]',key($guessed_districts))?>
+										<?=form_hidden('ambigous_city[]','')?>
+										<?=form_hidden('ambigous_district[]','')?>
+									</td>
+								<?php } ?>
+
 								<?=form_hidden('unit_price[]', $unit_price)?>
 								<?=form_hidden('next_unit_price[]', $next_unit_price)?>
 								<?=form_hidden('delivery_time[]', $delivery_time)?>
+								<td style="text-align:center"><?=$unit_price?></td>
+								<td style="text-align:center"><?=$next_unit_price?></td>
+								<td style="text-align:center"><?=$delivery_time?></td>
 							</tr>
 
 						<?php 
 							$idx++;
 						} else{
 						?>
-					<tr style="background-color:red">
+					<tr style="background-color:red;height:30px">
 						<td>&nbsp;</td>
-						<td style="text-align:justify"><?=$no?></td>
-						<td style="text-align:justify"><?=$district?></td>
-						<td style="text-align:right"><?=$unit_price?></td>
-						<td style="text-align:right"><?=$next_unit_price?></td>
-						<td style="text-align:right"><?=$delivery_time?></td>
-						<td style="text-align:right">
-							Tidak ditemukan
+						<td style="text-align:left"><?=$no?></td>
+						<td style="text-align:left"><?=$city?></td>
+						<td style="text-align:left"><?=$district?></td>
+						<td style="text-align:left">
+							Unable to guess, the district not found this row will not be processed, please fix the data first
 						</td>
+						<td style="text-align:center"><?=$unit_price?></td>
+						<td style="text-align:center"><?=$next_unit_price?></td>
+						<td style="text-align:center"><?=$delivery_time?></td>
 					</tr>
 						<?php } ?>
 
@@ -134,11 +201,24 @@
 				</table>
 			</div>		
 			<div style="padding:5px">
-				<input type="submit" id="process-button" style="height:50px;width:30%" value="Proses Data Terpilih"/>
+				<input type="submit" id="process-button" style="height:50px;width:30%" value="Process Selected Data"/>
 			</div>
 
 		</form>
 	</div>
 </div>
+
+<script type="text/javascript" src="<?=base_url()?>resource/js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="<?=base_url()?>resource/js/main.js"></script>
+<script type="text/javascript">
+	$('#logistic-filter-ambigous').click(function(){
+		$('tbody > tr.exact','#logistic-data').hide();
+		$('tbody > tr.ambigous','#logistic-data').show();
+	});
+	$('#logistic-filter-all').click(function(){
+		$('tbody > tr','#logistic-data').show();
+	});
+</script>
+
 </body>
 </html>

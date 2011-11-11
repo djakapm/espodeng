@@ -16,7 +16,6 @@
 				<li><a href="<?=site_url('welcome/news')?>">Berita</a></li>
 				<li><a href="<?=site_url('welcome/contactus')?>">Contact Us</a></li>
 				<li><a href="<?=site_url('welcome/about')?>">About</a></li>
-				<li><a href="<?=site_url('admin/login')?>">Login</a></li>
 			</ul>
 		</div>
 		<div id="copyright-container">

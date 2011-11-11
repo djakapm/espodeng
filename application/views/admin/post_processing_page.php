@@ -30,15 +30,25 @@
 		<div id="info" style="float:right"></div>		
 	</div>
 </div>
-<div id="container" style="width:75%;margin:auto">
+<div id="container" style="width:40%;margin:auto">
 	<div style="padding:5px">
-		<div class="block">
-			<h3>Operations</h3>
+	    <div class="block">
+			<h3>Summary</h3>
 			<ul>
-				<li><a href="<?=site_url('admin/upload_data')?>">Upload Data</a></li>
-				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
+				<li><?=$table_info?></li>
 			</ul>
+		</div>	
+		<div class="block">
+			<h5>Unknown Districts</h5>
+			<ol style="list-style-type:decimal">
+				<?php foreach($unknown_districts_data as $unknown_district_datum){?>
+				<li><?=$unknown_district_datum?></li>
+				<?php }?>
+			</ol>		
 		</div>
+	</div>
+	<div style="padding:5px">
+	<button style="height:50px;width:30%" onclick="location='<?=site_url('admin/upload_data')?>'">Done</button>
 	</div>
 </div>
 </body>

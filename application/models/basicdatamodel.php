@@ -52,9 +52,10 @@ class BasicDataModel extends CI_Model {
 
 	public function logistic_service_type(){
 
-		$this->db->select('orst.id as id,orlc.name as company_name ,orst.name as service_type_name');
+		$this->db->select('orst.id as id,orlc.name as company_name ,orst.name as service_type_name,orst.company_id');
 		$this->db->from('ongkir_ref_service_type orst');
 		$this->db->join('ongkir_ref_logistic_company orlc','orlc.id = orst.company_id','inner');
+		$this->db->group_by(array('orst.company_id', 'orst.id', 'orlc.name', 'orst.name')); 
 		$query = $this->db->get();
 		$logistic_service_types = array();
 		foreach ($query->result() as $row)
@@ -122,7 +123,8 @@ class BasicDataModel extends CI_Model {
 		return $cities;
 	}
 
-	public function district($city_id){
+	public function district($city_id=''){
+		$this->db->order_by('name');
 		if(empty($city_id)){
 			$query = $this->db->get('ongkir_ref_district');
 		}
