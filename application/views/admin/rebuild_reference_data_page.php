@@ -33,14 +33,29 @@
 <div id="container" style="width:75%;margin:auto">
 	<div style="padding:5px">
 		<div class="block">
-			<h3>Operations</h3>
+			<h3>Upload State, City and District Data</h3>
 			<ul>
-				<li><a href="<?=site_url('admin/rebuild_reference_data_landing')?>">Rebuild Reference Data</a></li>
-				<li><a href="<?=site_url('admin/rebuild_location_landing')?>">Rebuild Locations</a></li>
-				<li><a href="<?=site_url('admin/upload_data')?>">Upload Data</a></li>
+				<li><a href="<?=site_url('admin/landing')?>">Operations</a></li>
 				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
 			</ul>
 		</div>
+		<div class="block">
+		<form method="post" action="<?=site_url('admin/rebuild_reference_data')?>" enctype="multipart/form-data">
+			<div style="padding:5px">
+				<?php if(!empty($last_rebuilt_date)){?>
+				<p style="font-size:large">Last rebuilt: <?=$last_rebuilt_date?></p>
+				<?php } ?>
+
+				<label for="upload-input">Upload CSV File</label><br/>
+				<input id="upload-input" name="upload-input" type="file" class="input" style="padding-left:5px;"/>
+			</div>		
+			<div style="padding:5px">
+				<input type="submit" id="upload-button" style="height:50px;width:30%" value="Rebuild Reference Data"/>
+			</div>
+		</form>
+		</div>
+
+
 	</div>
 </div>
 </body>

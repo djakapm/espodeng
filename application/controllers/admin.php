@@ -15,6 +15,47 @@ class Admin extends CI_Controller {
 		$this->data['site_title'] = 'Ongkir';
 	}
 
+	public function rebuild_reference_data_landing(){
+		// $this->data['last_rebuilt_date'] = $this->update->get_location_last_rebuilt_date();
+		$this->load->view('admin/rebuild_reference_data_page',$this->data);
+	}
+
+	public function rebuild_reference_data(){
+		$config['upload_path'] = './upload/';
+		$config['allowed_types'] = 'csv|txt';
+
+		$this->load->library('upload', $config);
+
+		if ( ! $this->upload->do_upload('upload-input'))
+		{
+			$error = array('error' => $this->upload->display_errors());
+			print_r($error);
+		}
+		else
+		{
+	        $upload_data = $this->upload->data();
+	        $string = read_file($upload_data['full_path']);
+
+			$this->update->empty_reference_table();
+			$this->update->insert_reference_data($string);
+			
+			$this->load->view('admin/rebuild_reference_data_page',$this->data);
+		}			
+	}
+
+	public function rebuild_location_landing(){
+		$this->data['last_rebuilt_date'] = $this->update->get_location_last_rebuilt_date();
+		$this->load->view('admin/rebuild_location_page',$this->data);
+	}
+
+	public function rebuild_location(){
+		$this->update->empty_location_table();
+		$this->update->insert_district_data();
+		$this->update->insert_city_data();
+		$this->data['last_rebuilt_date'] = $this->update->get_location_last_rebuilt_date();
+		$this->load->view('admin/rebuild_location_page',$this->data);
+	}
+
 	private function validate_session(){
 		$session_id = $this->session->userdata('logged_in');
 		return $session_id;
@@ -48,7 +89,7 @@ class Admin extends CI_Controller {
 	}
 
 	public function unauthorize(){
-		echo 'Fuck You!';
+		echo '<h1>Fuck You!</h1>';
 	}
 
 	public function upload_data(){
@@ -111,10 +152,10 @@ class Admin extends CI_Controller {
 		else
 		{
 	        $upload_data = $this->upload->data();
-	        $string = read_file($upload_data['full_path']);
+	        // $string = read_file($upload_data['full_path']);
 
-			$csv_data = $this->update->parse_data($string);
-
+			// $csv_data = $this->update->parse_data($string);
+			$csv_data = $this->update->parse_file($upload_data['full_path']);
 			$this->data['origin_districts'] = $this->get_origin_districts();
 			$this->data['logistic_companies'] = $this->get_logistic_companies();
 			$this->data['logistic_service_types'] = $this->get_logistic_service_types();

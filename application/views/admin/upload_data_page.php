@@ -104,8 +104,8 @@
 						<th><?=form_checkbox('', '')?></th>
 						<th>No.</th>
 						<th>City</th>
-						<th>District</th>
-						<th>Guessed District</th>				
+						<th>Location</th>
+						<th>Guessed Location</th>				
 						<th title="Unit Price">UP(Rp)</th>
 						<th title="Next Unit Price">NUP(Rp)</th>
 						<th title="Delivery Time">DT(Hari)</th>
@@ -118,6 +118,7 @@
 				    $even = false;
 					if(!empty($csv_data))
 					foreach($csv_data as $csv_datum){
+					    $guessed_districts = array();
 						$i = 0;
 						$even = ($no % 2) == 0;
 						$country = (empty($csv_datum[$i]) ? '-' : $csv_datum[$i]);
