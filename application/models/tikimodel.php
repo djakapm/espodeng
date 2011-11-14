@@ -13,7 +13,8 @@ class TIKIModel extends CI_Model {
 
 		$this->db->select('orst.name service_name,ols.delivery_time,ols.unit_price');
 		$this->db->from('ongkir_logistic_service ols');
-		$this->db->join('ongkir_ref_service_type orst', 'orst.company_id = ols.company_id and orst.id = ols.service_type_id');
+		$this->db->join('ongkir_ref_service_type orst', 
+		'orst.company_id = ols.company_id and orst.id = ols.service_type_id','inner');
 		$this->db->where(array('ols.company_id'=>$company_id,'ols.origin_id'=>$origin_id,
 		'ols.destination_id'=>$destination_id));
 		$logistic_service_query = $this->db->get();  

@@ -8,9 +8,53 @@ class Service extends CI_Controller {
 	    $this->load->model('BasicDataModel','basicdata');
 	    $this->load->model('JNEModel','jne');
 	    $this->load->model('TIKIModel','tiki');
+	    $this->load->model('BusinessModel','business');
 	    $this->load->model('ValidationModel','validation');
 	    $this->load->helper('inflector');
+	    $this->load->library('recaptcha');
+
 	}
+
+	public function index(){
+		$results = array(
+			array('name'=>'a','total_price'=>6000,'delivery_time'=>4),
+			array('name'=>'b','total_price'=>7500,'delivery_time'=>3),
+			array('name'=>'c','total_price'=>18000,'delivery_time'=>2),
+			array('name'=>'d','total_price'=>25000,'delivery_time'=>1)		
+		);
+		
+		print_r($this->business->logistic_rank($results));
+	}
+
+	public function validate(){
+		$data = array();
+		$data['site_name'] = 'palingoke.info';
+		$data['site_title'] = 'Ongkir Paling Oke';
+		$response = $this->input->post('recaptcha_response_field');
+
+	    if ($this->check_captcha($response)) 
+	    {
+	    	$origin_id = $this->input->post('o');
+	    	$destination_id = $this->input->post('d');
+	    	$weight = $this->input->post('w');
+	    	$this->price($origin_id,$destination_id,$weight);
+	    }
+	    else
+	    {
+	    	echo json_encode(array('status'=>401,'message'=>'Captcha input is invalid'));
+	    }
+		
+	}
+
+	function check_captcha($val) {
+	  $original_val = $this->input->post('recaptcha_challenge_field');
+	  if ($this->recaptcha->check_answer($this->input->ip_address(),$original_val,$val)) {
+	    return TRUE;
+	  } else {
+	    return FALSE;
+	  }
+	}
+
 
 	public function _logistic_company(){
 		$logistic_companies =$this->basicdata->logistic_company();
@@ -63,31 +107,26 @@ class Service extends CI_Controller {
 			return;
 		}
 
-		$text = $_GET['q'];
+		// $text = $_GET['q'];
+		$text = $_GET['search'];
 		if(empty($text)){
 			echo json_encode(array());
 		}
 		else{
-			$result = $this->basicdata->fulltext_search($text);
+			$result = $this->basicdata->search_location($text);
 			$json_response = array();
 			foreach($result as $key => $value){
-				$json_response[$key] = '<span style="font-weight:bold">'.humanize($value[0]).'</span>&nbsp;('.humanize($value[1]).','.humanize($value[2].')');
+				$json_response[] = array('id'=>$key,'text'=>$value[0]);
 			}
 			echo json_encode($json_response);
 		}
 	}
 
-	public function price(){
-		// $recaptcha_answer = $_GET['r'];
-		// if(!$this->security->check_captcha($recaptcha_answer)){
-		// 	$json_response = array('status'=>401,'message'=>'Unauthorized');
-		// 	echo json_encode($json_response);	
-		// 	return;
-		// }
-
-		$origin_id = $_GET['o'];
-		$destination_id = $_GET['d'];
-		$weight = $_GET['w'];
+	public function price($origin_id='',$destination_id='',$weight=1){
+		$results = array();
+		// $origin_id = $_GET['o'];
+		// $destination_id = $_GET['d'];
+		// $weight = $_GET['w'];
 		$origin = $this->basicdata->load_district($origin_id);
 		$destination = $this->basicdata->load_district($destination_id);
 
@@ -105,14 +144,14 @@ class Service extends CI_Controller {
 				$jne_result = array('status'=>404,'message'=>'Not Found');			
 			}
 			else{
-				$jne_result = array();
+				$jne_result = array('status'=>200);
 
 				foreach($logistic_services as $logistic_service){
 					$service_name = $logistic_service['service_name'];
 					$delivery_time = $logistic_service['delivery_time'];
 					$unit_price = $logistic_service['unit_price'];
 					$total_price = $logistic_service['total_price'];
-					$jne_result[] = array(
+					$jne_result['data'][] = array(
 					'service_name'=>humanize($service_name),
 					'name'=>'jne',
 					'unit_price'=>$unit_price,
@@ -127,13 +166,13 @@ class Service extends CI_Controller {
 				$tiki_result = array('status'=>404,'message'=>'Not Found');			
 			}
 			else{
-				$tiki_result = array();
+				$tiki_result = array('status'=>200);
 				foreach($logistic_services as $logistic_service){
 					$service_name = $logistic_service['service_name'];
 					$delivery_time = $logistic_service['delivery_time'];
 					$unit_price = $logistic_service['unit_price'];
 					$total_price = $logistic_service['total_price'];
-					$tiki_result[] = array(
+					$tiki_result['data'][] = array(
 					'service_name'=>humanize($service_name),
 					'name'=>'tiki',
 					'unit_price'=>$unit_price,
@@ -142,10 +181,22 @@ class Service extends CI_Controller {
 				}
 			}
 
+			//Merge jne and tiki result
+			if($jne_result['status'] == 200){
+				$results = array_merge($results,$jne_result['data']);
+				
+			}
+			if($tiki_result['status'] == 200){
+				$results = array_merge($results,$tiki_result['data']);
+				
+			}
+
+			//Then do the ranking for 'paling ok'
+			$results = $this->business->logistic_rank($results);
+
 		$json_response = array(
 			'status'=>200,'message'=>'OK','origin'=>'Jakarta','destination'=>$destination->name,
-			'jne'=>$jne_result,
-			'tiki'=>$tiki_result
+			'results'=>$results
 			);			
 		}
 		else{
