@@ -9,7 +9,6 @@ class Service extends CI_Controller {
 	    $this->load->model('JNEModel','jne');
 	    $this->load->model('TIKIModel','tiki');
 	    $this->load->model('BusinessModel','business');
-	    $this->load->model('ValidationModel','validation');
 	    $this->load->helper('inflector');
 	    $this->load->library('recaptcha');
 
