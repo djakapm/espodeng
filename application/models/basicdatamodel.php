@@ -10,14 +10,25 @@ class BasicDataModel extends CI_Model {
 	    $this->load->database();
     }
 
-    public function supported_origin($district_id){
+
+    public function current_logistic_service_table(){
+    	$table_name = '';
+    	$query = $this->db->get_where('ongkir_registry',array('registry_name'=>'ongkir_logistic_service'));
+    	$rows = $query->result();
+    	if(!empty($rows)){
+    		$table_name = $rows[0]->string_value;
+    	}
+
+    	return $table_name;
+    }
+
+
+    public function supported_origin($location_id){
     	$supported_origin_state_ids = array(4);
     	$is_supported = FALSE;
-    	$this->db->select('city.state_id');
-    	$this->db->from('ongkir_ref_district district');
-    	$this->db->join('ongkir_ref_city city','city.id = district.city_id','inner');
-    	$this->db->join('ongkir_ref_state state','state.id = city.state_id','inner');
-    	$this->db->where(array('district.id'=>$district_id));
+    	$this->db->select('location.state_id');
+    	$this->db->from('ongkir_ref_location location');
+    	$this->db->where(array('location.id'=>$location_id));
     	$query = $this->db->get();
     	foreach($query->result() as $row){
     		if(in_array($row->state_id,$supported_origin_state_ids)){
@@ -144,12 +155,15 @@ class BasicDataModel extends CI_Model {
 		return $districts;
 	}
 
-	public function load_district($district_id){
-		$district_query = $this->db->get_where('ongkir_ref_district',array('id'=>$district_id));
+	public function load_district($location_id){
+		$this->db->select('ord.id,ord.name');
+		$this->db->from('ongkir_ref_district ord');
+		$this->db->join('ongkir_ref_location orl','orl.district_id = ord.id','inner');
+		$this->db->where(array('orl.id'=>$location_id));
+		$district_query = $this->db->get();
 		$district_results = $district_query->result();
 		if(empty($district_results)){ return FALSE;}
-		return $district_results[0];
-			
+		return $district_results[0];			
 	}
     
 

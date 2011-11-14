@@ -13,12 +13,12 @@ var base_url = 'http://localhost/app/ongkir/';
 		});
 	}
 
-	function compose_url(origin_id,destination_id){
-		var weight = $('#weight').val();
-		var url = base_url+'index.php/service/price?o='+origin_id+'&d='+destination_id+'&w='+weight;
+	// function compose_url(origin_id,destination_id){
+	// 	var weight = $('#weight').val();
+	// 	var url = base_url+'index.php/service/price?o='+origin_id+'&d='+destination_id+'&w='+weight;
 
-		return url;
-	}
+	// 	return url;
+	// }
 
 	function clear_result(){
 		$('#result-origin').text('');
@@ -74,16 +74,15 @@ var base_url = 'http://localhost/app/ongkir/';
 
 	function authorized(data){
 		clear_result();
-			console.log(data);
-			$('#result-info').text('');
-				var container = $('#logistic-ouput-container');
+		$('#result-info').text('');
+		var container = $('#logistic-ouput-container');
 
-			    logistic_service_result(container,data.results,false);
+	    logistic_service_result(container,data.results,false);
 
-			    var cache = data.results;
+	    var cache = data.results;
 
-			    container.data('cache',cache);
-				$('#result').show();
+	    container.data('cache',cache);
+		$('#result').show();
 	}
 
 	function unauthorized(){
@@ -95,11 +94,11 @@ var base_url = 'http://localhost/app/ongkir/';
 		var origin_district_id = $('#origin-input').attr('data');
 		var destination_district_id = $('#destination-input').attr('data');
 
-		var url = compose_url(origin_district_id,destination_district_id);
+		// var url = compose_url(origin_district_id,destination_district_id);
 
 		var params = $('#input-form').serialize()+'&o='+origin_district_id+'&d='+destination_district_id+'&w='+$('#weight').val();
-
 		$.post(base_url+'index.php/service/validate',params,function(data){
+
 			var json_response = $.parseJSON(data);
 			if(!json_response){
 				clear_result();

@@ -36,7 +36,7 @@ class Service extends CI_Controller {
 	    	$origin_id = $this->input->post('o');
 	    	$destination_id = $this->input->post('d');
 	    	$weight = $this->input->post('w');
-	    	$this->price($origin_id,$destination_id,$weight);
+	    	echo json_encode($this->compose_price($origin_id,$destination_id,$weight));
 	    }
 	    else
 	    {
@@ -121,11 +121,15 @@ class Service extends CI_Controller {
 		}
 	}
 
-	public function price($origin_id='',$destination_id='',$weight=1){
+	public function price(){
+		$origin_id = $_GET['o'];
+		$destination_id = $_GET['d'];
+		$weight = $_GET['w'];
+		echo json_encode($this->compose_price($origin_id,$destination_id,$weight));
+	}
+
+	private function compose_price($origin_id='',$destination_id='',$weight=1){
 		$results = array();
-		// $origin_id = $_GET['o'];
-		// $destination_id = $_GET['d'];
-		// $weight = $_GET['w'];
 		$origin = $this->basicdata->load_district($origin_id);
 		$destination = $this->basicdata->load_district($destination_id);
 
@@ -133,12 +137,11 @@ class Service extends CI_Controller {
 		$is_supported = $this->basicdata->supported_origin($origin_id);
 		if($is_supported){
 			//Currrently only service 'Jakarta to ...'
-
-			$origin_id = 2434; //Jakarta Pusat district
+			$origin_id = 2272; //Jakarta Pusat district
 			if($weight < 1){$weight = 1;}
-
+			$source_table = $this->basicdata->current_logistic_service_table();
 			//JNE
-			$logistic_services = $this->jne->get_logistic_service($origin_id,$destination_id,$weight);
+			$logistic_services = $this->jne->get_logistic_service($origin_id,$destination_id,$weight,$source_table);
 			if($logistic_services === FALSE){
 				$jne_result = array('status'=>404,'message'=>'Not Found');			
 			}
@@ -160,7 +163,7 @@ class Service extends CI_Controller {
 			}
 
 			//TIKI
-			$logistic_services = $this->tiki->get_logistic_service($origin_id,$destination_id,$weight);
+			$logistic_services = $this->tiki->get_logistic_service($origin_id,$destination_id,$weight,$source_table);
 			if($logistic_services === FALSE){
 				$tiki_result = array('status'=>404,'message'=>'Not Found');			
 			}
@@ -202,7 +205,7 @@ class Service extends CI_Controller {
 			$json_response = array('status'=>400,'message'=>'Origin not supported');			
 		}
 
-		echo json_encode($json_response);			
+		return $json_response;
 	}
 
 

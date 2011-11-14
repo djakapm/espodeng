@@ -7,20 +7,19 @@ class JNEModel extends CI_Model {
 	    $this->load->database();
     }
 
-	public function get_logistic_service($origin_id,$destination_id,$weight){
+	public function get_logistic_service($origin_id,$destination_id,$weight,$table){
 		$product = array();
 		$company_id = 1;
 
 		$this->db->select('orst.name service_name,ols.delivery_time,ols.unit_price');
-		$this->db->from('ongkir_logistic_service ols');
+		$this->db->from($table.' ols');
 		$this->db->join('ongkir_ref_service_type orst', 
 		'orst.company_id = ols.company_id and orst.id = ols.service_type_id','inner');
 		$this->db->where(array('ols.company_id'=>$company_id,'ols.origin_id'=>$origin_id,
 		'ols.destination_id'=>$destination_id));
 		$logistic_service_query = $this->db->get();  
-
 		$logistic_service_results = $logistic_service_query->result();
-
+		
 		if(empty($logistic_service_results)){
 			return FALSE;
 		}
