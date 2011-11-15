@@ -39,6 +39,15 @@
 				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
 			</ul>
 		</div>
+	</div>
+	<div style="padding:5px">
+	<p>
+		Upload CSV or TEXT file. That contains district, city and state data, in such format:<br/>
+		INDONESIA#D.I. ACEH#KAB. ACEH BARAT#Kec. Kaway XVI
+	</p>
+	</div>
+
+	<div style="padding:5px">
 		<div class="block">
 		<form method="post" action="<?=site_url('admin/rebuild_reference_data')?>" enctype="multipart/form-data">
 			<div style="padding:5px">

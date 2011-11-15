@@ -42,6 +42,13 @@
 		</div>
 	</div>
 	<div style="padding:5px">
+	<p>
+		Rebuilding locations data (ongkir_ref_location table) base on current districts(ongkir_ref_district table)
+		,cities(ongkir_ref_city table) and states(ongkir_ref_state table).
+		Every rebuild will overwrite the last rebuild.
+	</p>
+	</div>
+	<div style="padding:5px">
 		<?php if(!empty($last_rebuilt_date)){?>
 		<p style="font-size:large">Last rebuilt: <?=$last_rebuilt_date?></p>
 		<?php } ?>

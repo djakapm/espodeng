@@ -39,6 +39,17 @@
 				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
 			</ul>
 		</div>
+	</div>
+	<div style="padding:5px">
+	<p>
+		Upload CSV or TEXT file. That contains logistic data service, in such format:<br/>
+		INDONESIA#Sumatera Utara#Kota Medan#Medan#29,500#0#1<br/>
+		after a successful data submission new table will be created using today date<br/>
+		such as: ongkir_logistic_service_13112011
+	</p>
+	</div>
+
+	<div style="padding:5px">
 		<div class="block">
 		<form method="post" action="<?=site_url('admin/process_uploaded_data')?>" enctype="multipart/form-data">
 			<div style="padding:5px">
