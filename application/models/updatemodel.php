@@ -119,21 +119,7 @@ class UpdateModel extends CI_Model {
 
     private function compose_data($csv_datum){
         $presentation_datum = array();
-        $is_tiki_format = count($csv_datum) == 4;
-
-        if($is_tiki_format){
-            $district = $this->guess_location($csv_datum[0],$csv_datum[0],'');
-            $presentation_datum[] = '-';
-            $presentation_datum[] = '-';
-            $presentation_datum[] = $csv_datum[0];
-            $presentation_datum[] = '-';
-            $presentation_datum[] = $csv_datum[1];
-            $presentation_datum[] = $csv_datum[2];
-            $presentation_datum[] = $csv_datum[3];
-            
-        }
-        else{
-            $district = $this->guess_location($csv_datum[3],$csv_datum[2],$csv_datum[1]);
+            $district = $this->guess_location($csv_datum[3],$csv_datum[2],$csv_datum[1],$csv_datum[0]);
             $presentation_datum[] = $csv_datum[0];
             $presentation_datum[] = $csv_datum[1];
             $presentation_datum[] = $csv_datum[2];
@@ -141,7 +127,7 @@ class UpdateModel extends CI_Model {
             $presentation_datum[] = $csv_datum[4];
             $presentation_datum[] = $csv_datum[5];
             $presentation_datum[] = $csv_datum[6];
-        }
+            
             if(empty($district)){
                 $presentation_datum[] = array();
             }
@@ -274,12 +260,17 @@ class UpdateModel extends CI_Model {
     }
 
 
-    public function guess_location($district_name,$city_name,$state_name){
-
-        $rows = $this->look_for_district($district_name,$city_name);
-        if(empty($rows)){
-            $rows = $this->look_for_location($district_name);                            
+    public function guess_location($district_name,$city_name,$state_name,$country_name){
+        if(empty($state_name) && empty($district_name)){
+            $rows = $this->look_for_location($city_name);
         }
+        else{
+            $rows = $this->look_for_district($district_name,$city_name);
+            if(empty($rows)){
+                $rows = $this->look_for_location($district_name);
+            }            
+        }
+
 
     	$search_result = array();
     	foreach($rows as $row){
