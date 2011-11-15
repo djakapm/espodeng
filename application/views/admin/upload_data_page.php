@@ -11,11 +11,11 @@
 	<div id="top-fixed-section-one">
 		<div id="main-menu-container">
 			<ul id="main-menu">
-				<li><a href="<?=base_url()?>"><?=$site_name?></a></li>
-				<li><a href="<?=site_url('welcome/disclaimer')?>">Disclaimer</a></li>
-				<li><a href="<?=site_url('welcome/news')?>">Berita</a></li>
-				<li><a href="<?=site_url('welcome/contactus')?>">Contact Us</a></li>
-				<li><a href="<?=site_url('welcome/about')?>">About</a></li>
+				<li><a href="<?=site_url('admin/landing')?>">Home</a></li>
+				<li><a href="<?=site_url('admin/rebuild_reference_data_landing')?>">Rebuild Reference Data</a></li>
+				<li><a href="<?=site_url('admin/rebuild_location_landing')?>">Rebuild Locations</a></li>
+				<li><a href="<?=site_url('admin/upload_data')?>">Upload Data</a></li>
+				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
 			</ul>
 		</div>
 		<div id="copyright-container">
@@ -34,10 +34,6 @@
 	<div style="padding:5px">
 		<div class="block">
 			<h3>Upload Data</h3>
-			<ul>
-				<li><a href="<?=site_url('admin/landing')?>">Operations</a></li>
-				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
-			</ul>
 		</div>
 	</div>
 	<div style="padding:5px">

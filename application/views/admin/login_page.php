@@ -11,11 +11,6 @@
 	<div id="top-fixed-section-one">
 		<div id="main-menu-container">
 			<ul id="main-menu">
-				<li><a href="<?=base_url()?>"><?=$site_name?></a></li>
-				<li><a href="<?=site_url('welcome/disclaimer')?>">Disclaimer</a></li>
-				<li><a href="<?=site_url('welcome/news')?>">Berita</a></li>
-				<li><a href="<?=site_url('welcome/contactus')?>">Contact Us</a></li>
-				<li><a href="<?=site_url('welcome/about')?>">About</a></li>
 			</ul>
 		</div>
 		<div id="copyright-container">
