@@ -88,9 +88,9 @@
 			</div>
 			<div style="padding:5px">
 				<?=form_radio('logistic-filter','filtered',true,'id="logistic-filter-all"')?>
-				<label for="logistic-filter-all">All District</label>
+				<label for="logistic-filter-all">All District <?=(empty($all_district_count) ? '' : '('.$all_district_count.')')?></label>
 				<?=form_radio('logistic-filter','filtered',false,'id="logistic-filter-ambigous"')?>
-				<label for="logistic-filter-ambigous">Ambigous Districts</label>
+				<label for="logistic-filter-ambigous">Ambigous Districts <?=(empty($ambigous_district_count) ? '' : '('.$ambigous_district_count.')')?> and Unguessed Districts <?=(empty($unguessed_district_count) ? '' : '('.$unguessed_district_count.')')?></label>
 
 			</div>
 			<div style="padding:5px">

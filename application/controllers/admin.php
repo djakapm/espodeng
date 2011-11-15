@@ -152,15 +152,20 @@ class Admin extends CI_Controller {
 		else
 		{
 	        $upload_data = $this->upload->data();
-	        // $string = read_file($upload_data['full_path']);
+			$product = $this->update->parse_file($upload_data['full_path']);
+			$csv_data = $product['csv_data'];
+			$all_district_count = $product['district_count'];
+			$ambigous_district_count = $product['ambigous_district_count'];;
+			$unguessed_district_count = $product['unguessed_district_count'];
 
-			// $csv_data = $this->update->parse_data($string);
-			$csv_data = $this->update->parse_file($upload_data['full_path']);
 			$this->data['origin_districts'] = $this->get_origin_districts();
 			$this->data['logistic_companies'] = $this->get_logistic_companies();
 			$this->data['logistic_service_types'] = $this->get_logistic_service_types();
 			$this->data['current_file'] = $upload_data['orig_name'];
 			$this->data['csv_data'] = $csv_data;
+			$this->data['all_district_count'] = $all_district_count;
+			$this->data['ambigous_district_count'] = $ambigous_district_count;
+			$this->data['unguessed_district_count'] = $unguessed_district_count;
 			$this->load->view('admin/upload_data_page',$this->data);
 		}		
 	}

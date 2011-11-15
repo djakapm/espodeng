@@ -141,14 +141,29 @@ class UpdateModel extends CI_Model {
 
     public function parse_file($path){
         $csv_data = array();
+        $product = array('district_count'=>0,'ambigous_district_count'=>0,'unguessed_district_count'=>0);
         //INDONESIA#JAWA TENGAH#KAB. REMBANG#Rembang#10,000#4#0
         if (($handle = fopen($path, "r")) !== FALSE) {
             while (($data = fgetcsv($handle, 1000, "#")) !== FALSE) {
-            $csv_data[] = $this->compose_data($data);
+                $csv_datum = $this->compose_data($data);
+                $csv_data[] = $csv_datum;
+                $guessed_district_count = count($csv_datum[count($csv_datum)-1]);
+                $is_ambigous =  $guessed_district_count > 1;
+                $is_unguessed = $guessed_district_count == 0;
+                if($is_ambigous){
+                    $product['ambigous_district_count']++;
+                }
+                else
+                if($is_unguessed){
+                    $product['unguessed_district_count']++;
+                }
             }
             fclose($handle);
         }        
-        return $csv_data;
+        
+        $product['district_count'] = count($csv_data);
+        $product['csv_data'] = $csv_data;
+        return $product;
     }
 
     public function insert_data_to_incremented_table($selected_data,$unit_prices,$next_unit_prices
