@@ -72,10 +72,10 @@ class Admin extends CI_Controller {
 		$logged_in = $login_id == 'espodeng' && $password == 'espodeng6000';
 		if($logged_in){
 			$this->session->set_userdata('logged_in', $logged_in);
-			redirect('/admin/landing');
+			redirect('admin/landing');
 		}
 		else{
-			redirect('/admin/unauthorize','refresh');
+			redirect('admin/unauthorize');
 		}
 	}
 
@@ -89,7 +89,9 @@ class Admin extends CI_Controller {
 	}
 
 	public function unauthorize(){
-		echo '<h1>Fuck You!</h1>';
+		echo '<h1>Fuck You! and Fuck Off!</h1>';
+		echo '<h1>or</h1>';
+		echo "<button style='height:50px;width:30%' onclick=\"location.href='".site_url('admin/login')."'\">Try again</button>";
 	}
 
 	public function upload_data(){
