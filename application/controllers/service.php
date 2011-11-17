@@ -10,7 +10,7 @@ class Service extends CI_Controller {
 	    $this->load->model('TIKIModel','tiki');
 	    $this->load->model('BusinessModel','business');
 	    $this->load->helper('inflector');
-	    $this->load->library('recaptcha');
+	    // $this->load->library('recaptcha');
 
 	}
 
@@ -26,80 +26,37 @@ class Service extends CI_Controller {
 	}
 
 	public function validate(){
-		$data = array();
-		$data['site_name'] = 'palingoke.info';
-		$data['site_title'] = 'Ongkir Paling Oke';
-		$response = $this->input->post('recaptcha_response_field');
+		// $data = array();
+		// $data['site_name'] = 'palingoke.info';
+		// $data['site_title'] = 'Ongkir Paling Oke';
+		// $response = $this->input->post('recaptcha_response_field');
 
-	    if ($this->check_captcha($response)) 
-	    {
+	    // if ($this->check_captcha($response)) 
+	    // {
+
 	    	$origin_id = $this->input->post('o');
 	    	$destination_id = $this->input->post('d');
 	    	$weight = $this->input->post('w');
 	    	echo json_encode($this->compose_price($origin_id,$destination_id,$weight));
-	    }
-	    else
-	    {
-	    	echo json_encode(array('status'=>401,'message'=>'Captcha input is invalid'));
-	    }
+	    // }
+	    // else
+	    // {
+	    // 	echo json_encode(array('status'=>401,'message'=>'Captcha input is invalid'));
+	    // }
 		
 	}
 
-	function check_captcha($val) {
-	  $original_val = $this->input->post('recaptcha_challenge_field');
-	  if ($this->recaptcha->check_answer($this->input->ip_address(),$original_val,$val)) {
-	    return TRUE;
-	  } else {
-	    return FALSE;
-	  }
-	}
+	// function check_captcha($val) {
+	//   $original_val = $this->input->post('recaptcha_challenge_field');
+	//   if ($this->recaptcha->check_answer($this->input->ip_address(),$original_val,$val)) {
+	//     return TRUE;
+	//   } else {
+	//     return FALSE;
+	//   }
+	// }
 
 
-	public function _logistic_company(){
-		$logistic_companies =$this->basicdata->logistic_company();
-		echo json_encode($logistic_companies);
-	}
-
-	public function _country(){
-		$countries = $this->basicdata->country();
-		echo json_encode($countries);
-	}
-
-	public function _state(){
-		$country_id = $_GET['c'];
-		$states = $this->basicdata->state($country_id);
-		echo json_encode($states);
-	}
-	
-	public function _city(){
-		$state_id = $_GET['s'];
-		$cities = $this->basicdata->city($state_id);
-		echo json_encode($cities);
-	}
-
-	public function _district(){
-		$city_id = $_GET['c'];
-		$districts = $this->basicdata->district($city_id);
-		echo json_encode($districts);
-	}
-
-	public function supportedorigin(){
-		if(empty($_GET)){
-			echo json_encode(array());
-			return;
-		}
-
-		$text = $_GET['q'];
-		if(empty($text)){
-			echo json_encode(array());
-		}
-		else{
-			$json_response = $this->basicdata->supported_origin($text);
-			echo json_encode($json_response);
-		}		
-	}
-
-	public function place(){
+	public function location(){
 		// $json_response = array(3728=>'Tanah Abang,Jakarta Pusat,Indonesia',4551=>'Mojokerto, Jawa Tengah, Indonesia');
 		if(empty($_GET)){
 			echo json_encode(array());
@@ -122,6 +79,7 @@ class Service extends CI_Controller {
 	}
 
 	public function price(){
+
 		$origin_id = $_GET['o'];
 		$destination_id = $_GET['d'];
 		$weight = $_GET['w'];
@@ -130,12 +88,13 @@ class Service extends CI_Controller {
 
 	private function compose_price($origin_id='',$destination_id='',$weight=1){
 		$results = array();
-		$origin = $this->basicdata->load_district($origin_id);
-		$destination = $this->basicdata->load_district($destination_id);
+		$origin = $this->basicdata->load_location($origin_id);
+		$destination = $this->basicdata->load_location($destination_id);
 
 
 		$is_supported = $this->basicdata->supported_origin($origin_id);
 		if($is_supported){
+
 			//Currrently only service 'Jakarta to ...'
 			$origin_id = 2272; //Jakarta Pusat district
 			if($weight < 1){$weight = 1;}
@@ -197,7 +156,8 @@ class Service extends CI_Controller {
 			$results = $this->business->logistic_rank($results);
 
 		$json_response = array(
-			'status'=>200,'message'=>'OK','origin'=>'Jakarta','destination'=>$destination->name,
+			'status'=>200,'message'=>'OK','origin'=>'Jakarta',
+			'destination'=>$destination->name,
 			'results'=>$results
 			);			
 		}
