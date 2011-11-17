@@ -11,6 +11,20 @@ class BasicDataModel extends CI_Model {
     }
 
 
+    public function save_registry($registry_names,$numeric_values,$string_values){
+		$length = count($registry_names);
+		for($idx=0;$idx<$length;$idx++){
+			$this->db->where('registry_name', $registry_names[$idx]);
+			$this->db->update('ongkir_registry', array('numeric_value'=>$numeric_values[$idx],'string_value'=>$string_values[$idx]));
+		}    	
+    }
+
+    public function get_registry(){
+    	$query = $this->db->get("ongkir_registry");
+    	$rows = $query->result();
+    	return $rows;
+    }
+
     public function current_logistic_service_table(){
     	$table_name = '';
     	$query = $this->db->get_where('ongkir_registry',array('registry_name'=>'ongkir_logistic_service'));
@@ -161,10 +175,11 @@ class BasicDataModel extends CI_Model {
 		return $districts;
 	}
 
-	public function load_district($location_id){
-		$this->db->select('ord.id,ord.name');
-		$this->db->from('ongkir_ref_district ord');
-		$this->db->join('ongkir_ref_location orl','orl.district_id = ord.id','inner');
+	public function load_location($location_id){
+		$this->db->select('orl.id,case when ord.name is null then orc.name else ord.name end as name',false);
+		$this->db->from('ongkir_ref_location orl');
+		$this->db->join('ongkir_ref_district ord','ord.id = orl.district_id','left');
+		$this->db->join('ongkir_ref_city orc','orc.id = orl.city_id','inner');
 		$this->db->where(array('orl.id'=>$location_id));
 		$district_query = $this->db->get();
 		$district_results = $district_query->result();
