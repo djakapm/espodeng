@@ -10,3 +10,13 @@ or orc.name like '%bandung%'
 or ors.name like '%bandung%'
 order by ord.name, orl.id
 limit 10;
+
+#Load Location Query 
+
+select orl.id,case when ord.name is null then orc.name else ord.name end as name
+from ongkir_ref_location orl
+left join ongkir_ref_district ord on ord.id = orl.district_id
+inner join ongkir_ref_city orc on orc.id = orl.city_id
+where orl.id=5735;
+
+	
