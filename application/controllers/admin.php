@@ -15,8 +15,22 @@ class Admin extends CI_Controller {
 		$this->data['site_title'] = 'Ongkir';
 	}
 
+
+	public function setting(){
+		$this->data['settings'] = $this->basicdata->get_registry();
+		$this->load->view('admin/setting_page',$this->data);
+	}
+
+	public function save_setting(){
+		$registry_names = $this->input->post('registry_name');
+		$numeric_values = $this->input->post('numeric_value');
+		$string_values = $this->input->post('string_value');
+		$this->basicdata->save_registry($registry_names,$numeric_values,$string_values);
+
+		redirect('admin/setting');
+	}
+
 	public function rebuild_reference_data_landing(){
-		// $this->data['last_rebuilt_date'] = $this->update->get_location_last_rebuilt_date();
 		$this->load->view('admin/rebuild_reference_data_page',$this->data);
 	}
 
