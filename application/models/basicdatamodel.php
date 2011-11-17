@@ -19,6 +19,12 @@ class BasicDataModel extends CI_Model {
 		}    	
     }
 
+    public function get_registry_as_string($registry_name){
+    	$query = $this->db->get_where("ongkir_registry",array('registry_name'=>$registry_name));
+    	$rows = $query->result();
+    	return $rows[0]->string_value;    	
+    }
+
     public function get_registry(){
     	$query = $this->db->get("ongkir_registry");
     	$rows = $query->result();

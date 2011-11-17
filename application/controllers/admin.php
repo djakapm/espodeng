@@ -51,7 +51,7 @@ class Admin extends CI_Controller {
 	        $string = read_file($upload_data['full_path']);
 
 			$this->update->empty_reference_table();
-			$this->update->insert_reference_data($string);
+			$this->update->insert_reference_data($string,$this->basicdata->get_registry_as_string('column_separator'));
 			
 			$this->load->view('admin/rebuild_reference_data_page',$this->data);
 		}			
