@@ -52,9 +52,8 @@ class UpdateModel extends CI_Model {
         return $this->db->insert_id();
     }
 
-    public function insert_reference_data($string){
+    public function insert_reference_data($string,$column_separator){
         $line_separator = "\n";
-        $column_separator = '#';
         $csv_data = array();
         $rows = explode($line_separator,$string);
         foreach($rows as $row){
@@ -89,7 +88,7 @@ class UpdateModel extends CI_Model {
     }
 
     public function insert_district_data(){
-        $this->db->select('ord.id as district_id,orc.id as city_id,ors.id as state_id');        
+        $this->db->select('ord.id as district_id, ord.name as district_name, orc.id as city_id, orc.name as city_name, ors.id as state_id, ors.name as state_name');        
         $this->db->from('ongkir_ref_district ord');
         $this->db->join('ongkir_ref_city orc','orc.id = ord.city_id','inner');
         $this->db->join('ongkir_ref_state ors','ors.id = orc.state_id','inner');
@@ -97,7 +96,14 @@ class UpdateModel extends CI_Model {
         $rows = $query->result();
         $last_rebuilt_date = date('Y-m-d H:i:s', now());
         foreach($rows as $row){
-            $data = array('district_id'=>$row->district_id,'city_id'=>$row->city_id,'state_id'=>$row->state_id,'last_rebuilt_date'=>$last_rebuilt_date);
+            $data = array(
+                    'district_id'=>$row->district_id,
+                    'district_name'=>$row->district_name,
+                    'city_id'=>$row->city_id,
+                    'city_name'=>$row->city_name,
+                    'state_id'=>$row->state_id,
+                    'state_name'=>$row->state_name,
+                    'last_rebuilt_date'=>$last_rebuilt_date);
             $this->db->insert('ongkir_ref_location', $data);
         }
     }
@@ -223,7 +229,8 @@ class UpdateModel extends CI_Model {
         $this->db->join('ongkir_ref_location orl','orl.district_id = ord.id and orl.city_id = orc.id and orl.state_id = ors.id'
         ,'inner');
 
-        $this->db->where('ord.name',$location_name);
+        // $this->db->where('ord.name',$location_name);
+        $this->db->where("levenshtein_ratio(ord.name,".$this->db->escape($location_name).") >= 80",null,false);
 
         $query = $this->db->get();
 
@@ -234,7 +241,8 @@ class UpdateModel extends CI_Model {
             $this->db->join('ongkir_ref_state ors','ors.id = orc.state_id','inner');
             $this->db->join('ongkir_ref_location orl','orl.city_id = orc.id and orl.state_id = ors.id'
             ,'inner');
-            $this->db->like('orc.name',$location_name);
+            // $this->db->like('orc.name',$location_name);
+            $this->db->where("levenshtein_ratio(orc.name,".$this->db->escape($location_name).") >= 80",null,false);
             $this->db->where('orl.district_id',null);
             $query = $this->db->get();
             $rows = $query->result();            
