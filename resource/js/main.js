@@ -239,7 +239,7 @@ var base_url = 'http://localhost/app/ongkir/';
 			return false;
 		}
 		else if(weight > 100){
-			show_error('Berat maksimum paket adalaha 100 Kg');
+			show_error('Berat maksimum paket adalah 100 Kg');
 			return false;			
 		}
 
