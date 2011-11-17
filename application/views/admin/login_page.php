@@ -19,8 +19,10 @@
 	</div>
 	<div id="site-title-container">
 		<div style="float:left">
-			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="100" height="100"/> 
-			<h1><a href="#" style="text-decoration:none"><?=$site_title?></a></h1>
+			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="296" height="79"/> 
+			<!--h1><a href="#" style="text-decoration:none"-->
+			<?php //echo $site_title ?>
+			<!--/a></h1-->
 		</div>
 		<div id="info" style="float:right"></div>		
 	</div>

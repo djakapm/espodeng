@@ -36,22 +36,40 @@
 
 	<div style="padding:5px">
 		<div class="block">
-			<h3>Rebuild Locations</h3>
+			<h3>Settings</h3>
 		</div>
 	</div>
 	<div style="padding:5px">
 	<p>
-		Rebuilding locations data (ongkir_ref_location table) base on current districts(ongkir_ref_district table)
-		,cities(ongkir_ref_city table) and states(ongkir_ref_state table).
-		Every rebuild will overwrite the last rebuild.
+		General Application Settings
 	</p>
+	<form method="post" action="<?=site_url('admin/save_setting')?>">
+	<table>
+	<thead>
+		<tr>
+			<th>Registry Name</th>
+			<th style="text-align:center">Numeric Value</th>
+			<th style="text-align:center">String Value</th>
+		</tr>
+	</thead>
+	<?php
+		foreach($settings as $setting){
+	?>
+		<input type="hidden" name="registry_name[]" value="<?=$setting->registry_name?>"/>
+		<tr>
+		<td><?=$setting->registry_name?></td>
+		<td><input type="text" style="text-transform:none" name="numeric_value[]" value="<?=$setting->numeric_value?>"/></td>
+		<td><input type="text" size="100" style="text-transform:none" name="string_value[]" value="<?=$setting->string_value?>"/><td/>
+		</tr>
+	<?php
+		}
+	?>
+	</table>
 	</div>
 	<div style="padding:5px">
-		<?php if(!empty($last_rebuilt_date)){?>
-		<p style="font-size:large">Last rebuilt: <?=$last_rebuilt_date?></p>
-		<?php } ?>
-		<button style="height:50px;width:30%" onclick="location='<?=site_url('admin/rebuild_location')?>'">Rebuild Location</button>
+		<input type="submit" style="height:50px;width:30%" value="Save Settings"/>
 	</div>
+	</form>
 </div>
 </body>
 </html>

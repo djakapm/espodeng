@@ -24,8 +24,10 @@
 	</div>
 	<div id="site-title-container">
 		<div style="float:left">
-			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="100" height="100"/> 
-			<h1><a href="#" style="text-decoration:none"><?=$site_title?></a></h1>
+			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="296" height="79"/> 
+			<!--h1><a href="#" style="text-decoration:none"-->
+			<?php //echo $site_title ?>
+			<!--/a></h1-->
 		</div>
 		<div id="info" style="float:right"></div>		
 	</div>
@@ -34,9 +36,9 @@
 	<div style="padding:5px">
 		<div class="block">
 			<h3>Disclaimer</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Berat minimum paket adalah 1(satu) kg.</p> 
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Pembulatan bobot paket ditentukan oleh perusahaan logistik.</p> 
-			<p style="line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Perubahan harga ongkir dapat terjadi sewaktu-waktu tanpa pemberitahuan sebelumnya.</p> 
+			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Berat minimum paket adalah 1(satu) kg.</p> 
+			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Pembulatan bobot paket ditentukan oleh perusahaan logistik.</p> 
+			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Perubahan harga ongkir dapat terjadi sewaktu-waktu tanpa pemberitahuan sebelumnya.</p> 
 		</div>
 	</div>
 </div>

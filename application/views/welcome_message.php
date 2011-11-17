@@ -23,18 +23,19 @@
 		</div>
 	</div>
 	<div id="site-title-container">
-		<div style="float:left">
-			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="100" height="100"/> 
-			<h1><a href="#" style="text-decoration:none"><?=$site_title?></a></h1>
+		<div style="text-align:center">
+			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="296" height="79"/> 
+			<!--h1><a href="#" style="text-decoration:none"-->
+			<?php //echo $site_title ?>
+			<!--/a></h1-->
 		</div>
-		<div id="info" style="float:right"></div>		
+		<div id="info" style="text-align:center;height:50px"></div>		
 	</div>
 </div>
-<div id="container" style="width:40%;margin:auto">
-	<div style="padding:5px">
+<div id="container" style="width:75%;margin:auto">
+	<div style="padding:5px;float:left;width:50%">
 		<form id="input-form">
 	    <div id="input-container" class="block">
-			<h3>Data Paket</h3>
 			<div id="origin" style="padding:5px">
 				<label for="origin-input">Dari</label><br/>
 				<input id="origin-input" name="origin-input" type="text" class="input" style="padding-left:5px;"/>
@@ -45,24 +46,24 @@
 			</div>
 			<div style="padding:5px">
 				<label for="weight">Berat</label><br/>
-				<input id="weight" name="weight" type="text" value="1" class="number-input" style="text-align:center" size="4" maxlength="4"/>
+				<input id="weight" name="weight" type="text" value="1" class="number-input" style="text-align:center" size="4" maxlength="4"/><span>&nbsp;kg</span>
 			</div>
 			<div style="padding:5px">
-				<label class="label-input">Validasi</label><br/>
+				<!--label class="label-input">Validasi</label><br/-->
 				<?php 
-					echo $recaptcha;
+					//echo $recaptcha;
 				?>
 			</div>
 			<div style="padding:5px">
-				<button id="search-button" style="height:50px;width:100%"><span style="font-size:large;color:white">Cari</span></button>
+				<button id="search-button" type="button" style="height:50px;width:100%">Cari</button>
 			</div>
 		</div>	
 	</div>
-	<div style="padding:5px">
+	<div style="padding:5px;float:right;width:40%">
 		<div id="output-container" class="block">
 			<div style="height:30px">
-				<div style="float:left"><h3>Hasil Pencarian</h3></div>
-				<div style="float:right;padding:5px">
+				<!--div style="float:left"><h3>Hasil Pencarian</h3></div-->
+				<div id="search-result-sorter" style="float:right;padding:5px;display:none">
 					<span id="cheapest-filter" class="round-block">Termurah</span>
 					&nbsp;
 					<span id="middle-filter" class="round-block">Paling OKE</span>

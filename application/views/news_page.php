@@ -24,8 +24,10 @@
 	</div>
 	<div id="site-title-container">
 		<div style="float:left">
-			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="100" height="100"/> 
-			<h1><a href="#" style="text-decoration:none"><?=$site_title?></a></h1>
+			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="296" height="79"/> 
+			<!--h1><a href="#" style="text-decoration:none"-->
+			<?php //echo $site_title ?>
+			<!--/a></h1-->
 		</div>
 		<div id="info" style="float:right"></div>		
 	</div>
@@ -34,20 +36,20 @@
 	<div style="padding:5px">
 		<div id="news-container" class="block">
 			<h3>Berita</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0;text-align:justify">Saat ini kami hanya melayani data pengiriman dari Jakarta.</p>
-			<p style="line-height:20px;margin: 10px 0 10px 0;text-align:justify">Support untuk daerah asal lainnya segera.</p>
+			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;text-align:justify">Saat ini kami hanya melayani data pengiriman dari Jakarta.</p>
+			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;text-align:justify">Support untuk daerah asal lainnya segera.</p>
 		</div>
 	</div>
 	<div style="padding:5px">
 		<div class="block">
 			<h3>Anda dapat berpartisipasi</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0;text-align:justify">Anda dapat mengirimkan request data pengiriman kepada kami. Silahkan kirimkan email ke admin@palingoke.info nama daerah asal dan tujuan selengkap-lengkapnya juga sertakan nama perusahaan jasa pengiriman yang Anda kehendaki.</p>
+			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;text-align:justify">Anda dapat mengirimkan request data pengiriman kepada kami. Silahkan kirimkan email ke admin@palingoke.info nama daerah asal dan tujuan selengkap-lengkapnya juga sertakan nama perusahaan jasa pengiriman yang Anda kehendaki.</p>
 		</div>
 	</div>
 	<div style="padding:5px">
 		<div class="block">
 			<h3>Kritik dan saran</h3>
-			<p style="line-height:20px;margin: 10px 0 10px 0;text-align:justify">Anda dapat mengirimkan kritik dan saran. Silahkan kirimkan email ke admin@palingoke.info nama kritik dan saran Anda. Jika Anda melihat adanya kesalahan data pengiriman Anda juga dapat melaporkannya kepada kami melalui admin@palingoke.info.</p>
+			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;text-align:justify">Anda dapat mengirimkan kritik dan saran. Silahkan kirimkan email ke admin@palingoke.info nama kritik dan saran Anda. Jika Anda melihat adanya kesalahan data pengiriman Anda juga dapat melaporkannya kepada kami melalui admin@palingoke.info.</p>
 		</div>
 	</div>
 </div>

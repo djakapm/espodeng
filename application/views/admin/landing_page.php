@@ -15,6 +15,7 @@
 				<li><a href="<?=site_url('admin/rebuild_reference_data_landing')?>">Rebuild Reference Data</a></li>
 				<li><a href="<?=site_url('admin/rebuild_location_landing')?>">Rebuild Locations</a></li>
 				<li><a href="<?=site_url('admin/upload_data')?>">Upload Data</a></li>
+				<li><a href="<?=site_url('admin/setting')?>">Settings</a></li>
 				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
 			</ul>
 		</div>
@@ -24,8 +25,10 @@
 	</div>
 	<div id="site-title-container">
 		<div style="float:left">
-			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="100" height="100"/> 
-			<h1><a href="#" style="text-decoration:none"><?=$site_title?></a></h1>
+			<img alt="palingoke.info logo" src="<?=base_url()?>resource/img/logo_.png" width="296" height="79"/> 
+			<!--h1><a href="#" style="text-decoration:none"-->
+			<?php //echo $site_title ?>
+			<!--/a></h1-->
 		</div>
 		<div id="info" style="float:right"></div>		
 	</div>
@@ -38,6 +41,7 @@
 				<li><a href="<?=site_url('admin/rebuild_reference_data_landing')?>">Rebuild Reference Data</a></li>
 				<li><a href="<?=site_url('admin/rebuild_location_landing')?>">Rebuild Locations</a></li>
 				<li><a href="<?=site_url('admin/upload_data')?>">Upload Data</a></li>
+				<li><a href="<?=site_url('admin/setting')?>">Settings</a></li>
 				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
 			</ul>
 		</div>
