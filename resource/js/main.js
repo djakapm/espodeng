@@ -130,7 +130,7 @@ var base_url = 'http://localhost/app/ongkir/';
 		}
 
 		var complete_callback = function(){
-			$('#search-button').removeAttr('disabled');			
+			$('#search-button').removeAttr('disabled').text('Cari');			
 		}
 
 		$.ajax({
@@ -211,10 +211,12 @@ var base_url = 'http://localhost/app/ongkir/';
 	}
 
 	function origin_callback(item){
+		console.log('origin: '+item.id);
 		$('#origin-input').attr('data',item.id);		
 	}
 
 	function destination_callback(item){
+		console.log('destination: '+item.id);
 		$('#destination-input').attr('data',item.id);
 	}
 
@@ -231,9 +233,14 @@ var base_url = 'http://localhost/app/ongkir/';
 			return false;
 		}
 
-		if(!parseFloat($('#weight').val())){
+		var weight = parseFloat($('#weight').val());
+		if(!weight){
 			show_error('Silahkan isi berat paket');
 			return false;
+		}
+		else if(weight > 100){
+			show_error('Berat maksimum paket adalaha 100 Kg');
+			return false;			
 		}
 
 		// if(!$('input[name=recaptcha_response_field]').val()){
@@ -288,7 +295,7 @@ var base_url = 'http://localhost/app/ongkir/';
 
 		$('#search-button').click(function(){
 			if(valid_input()){
-				$('#search-button').attr('disabled','disabled');
+				$('#search-button').attr('disabled','disabled').text('Mencari...');
 				clear_info();
 				search_action();			
 			}
