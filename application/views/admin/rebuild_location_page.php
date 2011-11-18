@@ -15,6 +15,7 @@
 				<li><a href="<?=site_url('admin/rebuild_reference_data_landing')?>">Rebuild Reference Data</a></li>
 				<li><a href="<?=site_url('admin/rebuild_location_landing')?>">Rebuild Locations</a></li>
 				<li><a href="<?=site_url('admin/upload_data')?>">Upload Data</a></li>
+				<li><a href="<?=site_url('admin/setting')?>">Settings</a></li>
 				<li><a href="<?=site_url('admin/login')?>">Logout</a></li>
 			</ul>
 		</div>
