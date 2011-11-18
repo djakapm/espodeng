@@ -63,7 +63,7 @@
 		<form method="post" action="<?=site_url('admin/process_data')?>">
 			<div style="padding:5px">
 				<?php if(!empty($origin_districts)){?>
-				<label>Origin District</label><br/>
+				<label>Origin Location</label><br/>
 				<?=form_dropdown('origin_district',$origin_districts)?>
 				<?php } ?>
 			</div>
