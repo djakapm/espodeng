@@ -75,6 +75,7 @@ class UpdateModel extends CI_Model {
 
     public function empty_reference_table(){
         $this->db->truncate('ongkir_ref_country');
+        $this->db->truncate('ongkir_ref_state');
         $this->db->truncate('ongkir_ref_city');
         $this->db->truncate('ongkir_ref_district');
     }
@@ -114,13 +115,13 @@ class UpdateModel extends CI_Model {
     public function insert_city_data(){
         $last_rebuilt_date = date('Y-m-d H:i:s', now());
 
-        $this->db->select('orc.id as city_id,ors.id as state_id');        
+        $this->db->select('orc.id as city_id,ors.id as state_id, orc.name as city_name, ors.name as state_name');        
         $this->db->from('ongkir_ref_city orc');
         $this->db->join('ongkir_ref_state ors','ors.id = orc.state_id','inner');
         $query = $this->db->get();
         $rows = $query->result();
         foreach($rows as $row){
-            $data = array('city_id'=>$row->city_id,'state_id'=>$row->state_id,'last_rebuilt_date'=>$last_rebuilt_date);
+            $data = array('state_name'=>$row->state_name,'city_name'=>$row->city_name,'city_id'=>$row->city_id,'state_id'=>$row->state_id,'last_rebuilt_date'=>$last_rebuilt_date);
             $this->db->insert('ongkir_ref_location', $data);
         }
         
