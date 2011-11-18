@@ -14,8 +14,8 @@
 				<li><a href="<?=base_url()?>"><?=$site_name?></a></li>
 				<li><a href="<?=site_url('welcome/disclaimer')?>">Disclaimer</a></li>
 				<li><a href="<?=site_url('welcome/news')?>">Berita</a></li>
-				<li><a href="<?=base_url()?>">Contact Us</a></li>
-				<li><a href="<?=base_url()?>">About</a></li>
+				<li><a href="<?=site_url('welcome/contactus')?>">Contact Us</a></li>
+				<li><a href="<?=site_url('welcome/about')?>">About</a></li>
 			</ul>
 		</div>
 		<div id="copyright-container">
@@ -35,10 +35,16 @@
 <div id="container" style="width:40%;margin:auto">
 	<div style="padding:5px">
 		<div class="block">
-			<h3>Disclaimer</h3>
-			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Berat minimum paket adalah 1(satu) kg.</p> 
-			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Pembulatan bobot paket ditentukan oleh perusahaan logistik.</p> 
-			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;color:red;text-align:justify">Perubahan harga ongkir dapat terjadi sewaktu-waktu tanpa pemberitahuan sebelumnya.</p> 
+			<h3>Tentang Situs Ini</h3>
+			<p style="text-transform:none;line-height:20px;margin: 10px 0 10px 0;text-align:justify">
+				Fungsi utama dari situs ini adalah untuk membandingkan ongkos kirim dari pelbagai
+				jasa kurir di Indonesia.
+				Demi terciptanya persaingan yang sehat, kami sebagai mata konsumen berkeinginan untuk
+				menyediakan sarana untuk membandingkan jasa tersebut dengan mudah dan dengan data yang akurat.
+				Kami berharap dengan adanya situs ini semoga dapat membantu para konsumen jasa kurir ataupun
+				toko - toko online sebagai pengguna jasa kurir yang terbanyak.
+			</p>
+
 		</div>
 	</div>
 </div>

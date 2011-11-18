@@ -1,6 +1,7 @@
 var base_url = 'http://localhost/app/ongkir/';
 
-	function default_input_behaviour(input,default_string){
+	function default_input_behaviour(input,default_string,click_callback){
+		input.click(click_callback);
 		input.val(default_string);
 		input.focus(function(event){
 			$(this).val('');
@@ -13,14 +14,12 @@ var base_url = 'http://localhost/app/ongkir/';
 		});
 	}
 
-	function compose_url(origin_id,destination_id){
-		var weight = $('#weight').val();
-		// var recaptcha_answer = $('textarea[name=recaptcha_challenge_field]').val();
-		var url = base_url+'index.php/service/price?o='+origin_id+'&d='+destination_id+'&w='+weight;
-		// +'&r='+recaptcha_answer;
+	// function compose_url(origin_id,destination_id){
+	// 	var weight = $('#weight').val();
+	// 	var url = base_url+'index.php/service/price?o='+origin_id+'&d='+destination_id+'&w='+weight;
 
-		return url;
-	}
+	// 	return url;
+	// }
 
 	function clear_result(){
 		$('#result-origin').text('');
@@ -76,33 +75,41 @@ var base_url = 'http://localhost/app/ongkir/';
 
 	function authorized(data){
 		clear_result();
-			console.log(data);
-			$('#result-info').text('');
-				var container = $('#logistic-ouput-container');
+		$('#result-info').text('');
+		var container = $('#logistic-ouput-container');
 
-			    logistic_service_result(container,data.results,false);
+		if(!data.results){
+			$('#search-result-sorter').hide();
+			show_error('Maaf kami tidak menemukan data ongkir dari '+data.origin+' ke '+data.destination);
+		}
+		else{
+			$('#search-result-sorter').show();
 
-			    var cache = data.results;
+		    logistic_service_result(container,data.results,false);
 
-			    container.data('cache',cache);
-				$('#result').show();
+		    var cache = data.results;
+
+		    container.data('cache',cache);
+			$('#result').show();			
+		}
 	}
 
 	function unauthorized(){
 		clear_result();
-		show_error('Maaf validasi captcha tidak berhasil, silahkan ketik ulang.');
+		show_error('Maaf validasi captcha tidak berhasil, silahkan ketik ulang');
 	}
 
 	function search_action(){
 		var origin_district_id = $('#origin-input').attr('data');
 		var destination_district_id = $('#destination-input').attr('data');
 
-		var url = compose_url(origin_district_id,destination_district_id);
+		// var url = compose_url(origin_district_id,destination_district_id);
 
 		var params = $('#input-form').serialize()+'&o='+origin_district_id+'&d='+destination_district_id+'&w='+$('#weight').val();
 
-		$.post(base_url+'index.php/service/validate',params,function(data){
+		var success_callback = function(data){
 			var json_response = $.parseJSON(data);
+			
 			if(!json_response){
 				clear_result();
 				show_error('Invalid response');				
@@ -120,8 +127,23 @@ var base_url = 'http://localhost/app/ongkir/';
 				clear_result();
 				show_warning('Maaf untuk saat ini Kami hanya melayani pengiriman dari Jakarta.');
 			}
-		});
-		Recaptcha.reload();
+		}
+
+		var complete_callback = function(){
+			$('#search-button').removeAttr('disabled').text('Cari');			
+		}
+
+		$.ajax({
+		   type: "POST",
+		   url: base_url+'index.php/service/validate',
+		   data: params,
+		   success: success_callback,
+		   complete: complete_callback
+		 });
+
+
+
+		// Recaptcha.reload();
 
 	}
 
@@ -189,10 +211,12 @@ var base_url = 'http://localhost/app/ongkir/';
 	}
 
 	function origin_callback(item){
+		console.log('origin: '+item.id);
 		$('#origin-input').attr('data',item.id);		
 	}
 
 	function destination_callback(item){
+		console.log('destination: '+item.id);
 		$('#destination-input').attr('data',item.id);
 	}
 
@@ -200,40 +224,52 @@ var base_url = 'http://localhost/app/ongkir/';
 
 
 		if(!$('#origin-input').attr('data')){
-			show_error('Silahkan isi daerah asal.');
+			show_error('Silahkan isi daerah asal');
 			return false;
 		}
 
 		if(!$('#destination-input').attr('data')){
-			show_error('Silahkan isi daerah tujuan.');
+			show_error('Silahkan isi daerah tujuan');
 			return false;
 		}
 
-		if(!parseFloat($('#weight').val())){
-				show_error('Silahkan isi berat paket.');
-				return false;
-		}
-
-		if(!$('input[name=recaptcha_response_field]').val()){
-			show_error('Silahkan isi validasi sesuai dengan gambar.');
+		var weight = parseFloat($('#weight').val());
+		if(!weight){
+			show_error('Silahkan isi berat paket');
 			return false;
 		}
+		else if(weight > 100){
+			show_error('Berat maksimum paket adalah 100 Kg');
+			return false;			
+		}
+
+		// if(!$('input[name=recaptcha_response_field]').val()){
+		// 	show_error('Silahkan isi validasi sesuai dengan gambar.');
+		// 	return false;
+		// }
 
 		return true;
 		
 	}
 
 	var main = function(){
-
+	 
+	if($.find('#origin-input').length > 0)	
 	$('#origin-input').jsonSuggest({
-		url:base_url+'index.php/service/place',minCharacters:3,onSelect:origin_callback
+		data: [{id: 2272,text: 'Jakarta',}],minCharacters:3,onSelect:origin_callback
 	});
+
+	if($.find('#destination-input').length > 0)
 	$('#destination-input').jsonSuggest({
-		url:base_url+'index.php/service/place',minCharacters:3,onSelect:destination_callback
+		url:base_url+'index.php/service/location',minCharacters:3,onSelect:destination_callback
 	});
 				
-	default_input_behaviour($('#origin-input'),'Kota asal(Minimal 3 karakter)?');
-	default_input_behaviour($('#destination-input'),'Kota tujuan(Minimal 3 karakter)?');
+	default_input_behaviour($('#origin-input'),'Kota asal (Minimal 3 karakter)',function(){		
+		$('#origin-input').removeAttr('data');		
+	});
+	default_input_behaviour($('#destination-input'),'Kota tujuan (Minimal 3 karakter)',function(){
+		$('#destination-input').removeAttr('data');
+	});
 
 		$('#cheapest-filter').click(function(e){
 			clear_result();
@@ -259,6 +295,7 @@ var base_url = 'http://localhost/app/ongkir/';
 
 		$('#search-button').click(function(){
 			if(valid_input()){
+				$('#search-button').attr('disabled','disabled').text('Mencari...');
 				clear_info();
 				search_action();			
 			}
