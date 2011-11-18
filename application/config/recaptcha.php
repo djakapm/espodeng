@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 The reCaptcha server keys and API locations
 
@@ -14,3 +14,5 @@ $config['recaptcha'] = array(
   'RECAPTCHA_SIGNUP_URL' => 'https://www.google.com/recaptcha/admin/create',
   'theme' => 'clean'
 );
+
+?>
