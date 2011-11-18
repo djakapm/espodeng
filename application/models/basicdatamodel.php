@@ -192,6 +192,23 @@ class BasicDataModel extends CI_Model {
 		if(empty($district_results)){ return FALSE;}
 		return $district_results[0];			
 	}
+        
+        public function get_all_origin() {
+            $this->db->select('orl.id,orl.city_name as name',false);
+            $this->db->from('ongkir_ref_location orl');
+            $this->db->where(array('orl.district_id'=>null));
+            $this->db->order_by('orl.city_name');
+            
+            $query = $this->db->get();
+            
+            $origins = array();
+            foreach ($query->result() as $row)
+            {
+                    $origins[] = $row;
+            }
+
+            return $origins;
+        }
     
 
 }

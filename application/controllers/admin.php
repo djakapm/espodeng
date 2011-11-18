@@ -209,7 +209,7 @@ class Admin extends CI_Controller {
 
 	private function get_origin_districts(){
 		$origin_districts = array();
-		$rows = $this->basicdata->district();
+                $rows = $this->basicdata->get_all_origin();
 		foreach($rows as $row){
 			$origin_districts[$row->id] = strtoupper($row->name);
 		}
