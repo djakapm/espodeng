@@ -152,6 +152,7 @@ h3{font-size:1.5em;}
 
 #main-menu > li{
 	display:inline;
+	padding-left: 20px;
 }
 
 #main-menu > li > a{
