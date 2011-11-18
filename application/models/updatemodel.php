@@ -2,6 +2,9 @@
 
 class UpdateModel extends CI_Model {
 
+    private $district_cache = array();
+    private $city_cache = array();
+
     function __construct()
     {
         parent::__construct();
@@ -125,7 +128,8 @@ class UpdateModel extends CI_Model {
 
     private function compose_data($csv_datum){
         $presentation_datum = array();
-            $district = $this->guess_location($csv_datum[3],$csv_datum[2],$csv_datum[1],$csv_datum[0]);
+            $district = $this->guess_location($csv_datum[3],$csv_datum[2]);
+            
             $presentation_datum[] = $csv_datum[0];
             $presentation_datum[] = $csv_datum[1];
             $presentation_datum[] = $csv_datum[2];
@@ -220,77 +224,86 @@ class UpdateModel extends CI_Model {
         return $insert;
     }
 
-    private function look_for_location($location_name){
+    private function look_for_city($city_name){
+        $final_rows = array();
+        $minimum_match_percentage = 80;
 
-        $this->db->select('orl.id,ord.name as district_name,orc.name as city_name');
-        $this->db->from('ongkir_ref_district ord');
-        $this->db->join('ongkir_ref_city orc','orc.id = ord.city_id','inner');
-        $this->db->join('ongkir_ref_state ors','ors.id = orc.state_id','inner');
-        $this->db->join('ongkir_ref_location orl','orl.district_id = ord.id and orl.city_id = orc.id and orl.state_id = ors.id'
-        ,'inner');
-
-        // $this->db->where('ord.name',$location_name);
-        $this->db->where("levenshtein_ratio(ord.name,".$this->db->escape($location_name).") >= 80",null,false);
-
-        $query = $this->db->get();
-
-        $rows = $query->result();
-        if(empty($rows)){
-            $this->db->select('orl.id,orc.name as city_name');
-            $this->db->from('ongkir_ref_city orc');
-            $this->db->join('ongkir_ref_state ors','ors.id = orc.state_id','inner');
-            $this->db->join('ongkir_ref_location orl','orl.city_id = orc.id and orl.state_id = ors.id'
-            ,'inner');
-            // $this->db->like('orc.name',$location_name);
-            $this->db->where("levenshtein_ratio(orc.name,".$this->db->escape($location_name).") >= 80",null,false);
-            $this->db->where('orl.district_id',null);
+        if(empty($this->city_cache)){
+            $this->db->select('orl.id,orl.city_name');
+            $this->db->from('ongkir_ref_location orl');
+            $this->db->or_where('orl.district_id',null);
             $query = $this->db->get();
-            $rows = $query->result();            
-        }
-        
-
-        return $rows;
-    }
-
-    private function look_for_district($district_name,$city_name){
-        $select = 'orl.id,ord.name as district_name,orc.name as city_name';
-        $from = 'ongkir_ref_district ord';
-        $this->db->select($select);
-        $this->db->from($from);
-        $this->db->join('ongkir_ref_city orc','orc.id = ord.city_id','inner');
-        $this->db->join('ongkir_ref_state ors','ors.id = orc.state_id','inner');
-        $this->db->join('ongkir_ref_location orl','orl.district_id = ord.id and orl.city_id = orc.id and orl.state_id = ors.id'
-        ,'inner');
-
-        $query = $this->db->where(array('ord.name'=>$district_name,'orc.name'=>$city_name));
-        $query = $this->db->get();
-
-        $rows = $query->result();
-        if(empty($rows)){
-            $this->db->select($select);
-            $this->db->from($from);
-            $this->db->join('ongkir_ref_city orc','orc.id = ord.city_id','inner');
-            $this->db->join('ongkir_ref_state ors','ors.id = orc.state_id','inner');
-            $this->db->join('ongkir_ref_location orl','orl.district_id = ord.id and orl.city_id = orc.id and orl.state_id = ors.id'
-            ,'inner');
-            $query = $this->db->where('match(ord.name) against ("'.$this->db->escape_str($district_name).'")');
-            $query = $this->db->where(array('orc.name'=>$city_name));
-            $query = $this->db->get();
-            $rows = $query->result();            
-        }
-        
-        return $rows;
-    }
-
-
-    public function guess_location($district_name,$city_name,$state_name,$country_name){
-        if(empty($state_name) && empty($district_name)){
-            $rows = $this->look_for_location($city_name);
+            $rows = $query->result();
+            $this->city_cache = $rows;
         }
         else{
-            $rows = $this->look_for_district($district_name,$city_name);
+            $rows = $this->city_cache;
+        }
+
+
+        foreach($rows as $row){
+            similar_text(strtolower($row->city_name), strtolower($city_name), $percentage);
+            if($percentage == 100){
+                $final_rows = array();
+                $final_rows[] = $row;
+                return $final_rows;
+            }
+            else
+            if($percentage >= $minimum_match_percentage){
+                $final_rows[] = $row;
+            }
+        }
+        
+
+        return $final_rows;
+    }
+
+    private function look_for_district($district_name){
+        $final_rows = array();
+        $minimum_match_percentage = 70;
+
+        if(empty($this->district_cache)){
+            $this->db->select('orl.id,orl.district_name,orl.city_name');
+            $this->db->from('ongkir_ref_location orl');
+            $query = $this->db->get();
+            $rows = $query->result();
+            $this->district_cache = $rows;
+        }
+        else{
+            $rows = $this->district_cache;
+        }
+        
+
+        foreach($rows as $row){
+            similar_text(strtolower($row->district_name), strtolower($district_name), $percentage);
+
+            if($percentage == 100){
+                $final_rows = array();
+                $final_rows[] = $row;
+                return $final_rows;
+            }
+            else
+            if($percentage >= $minimum_match_percentage){
+                $final_rows[] = $row;
+            }
+        }
+
+        
+        return $final_rows;
+    }
+
+
+    public function guess_location($district_name,$city_name){
+        if(empty($district_name)){
+                $rows = $this->look_for_city($city_name);
             if(empty($rows)){
-                $rows = $this->look_for_location($district_name);
+                $rows = $this->look_for_district($city_name);
+            }            
+        }
+        else{
+            $rows = $this->look_for_district($district_name);
+            if(empty($rows)){
+                $rows = $this->look_for_city($district_name);
             }            
         }
 

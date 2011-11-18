@@ -85,6 +85,9 @@
 			<?php } ?>
 			</div>
 			<div style="padding:5px">
+			<p>Elapsed time: <?php echo $this->benchmark->elapsed_time();?> (seconds)</p>
+			</div>
+			<div style="padding:5px">
 				<?=form_checkbox('replace_data','replace',true,'id="replace_data"')?>
 				<label for="replace_data">Create or Replace Data</label>
 			</div>
