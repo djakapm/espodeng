@@ -21,7 +21,7 @@ where orl.id=5735;
 
 #Get Origin Location for Frontend
 
-select orl.id,orl.state_name from ongkir_ref_location orl where orl.id = 
+select orl.id,orl.city_name from ongkir_ref_location orl where orl.id = 
 (select distinct(ols.origin_id) from ongkir_logistic_service_19112011 ols)
-where orl.state_name like '%jakarta%'
-order by orl.state_name,orl.id;
+and orl.city_name like '%jakarta%'
+order by orl.city_name,orl.id;
