@@ -43,6 +43,23 @@ class BasicDataModel extends CI_Model {
     }
 
 
+    public function search_origin_location($source_table,$text){
+		$this->db->select('orl.id,orl.city_name',FALSE);
+		$this->db->from('ongkir_ref_location orl');
+		$this->db->where('orl.id = (select distinct(ols.origin_id) from '.$source_table.' ols)',NULL,FALSE);
+    	$this->db->like('orl.city_name',$text);
+    	$this->db->order_by('orl.city_name', 'orl.id');
+    	$this->db->limit($this->search_limit);
+        $query = $this->db->get();
+    	foreach($query->result() as $row){
+    		$city_name = $row->city_name;
+   			$search_result[$row->id] = array($city_name);
+    	}
+
+    	return $search_result;
+
+    }
+
     public function supported_origin($location_id){
     	$supported_origin_state_ids = array(4);
     	$is_supported = FALSE;
@@ -61,15 +78,12 @@ class BasicDataModel extends CI_Model {
     }
 
     public function search_location($text){
-    	$this->db->select('orl.id,ord.name as district_name,orc.name as city_name,ors.name as state_name');
+    	$this->db->select('orl.id,orl.district_name,orl.city_name,orl.state_name');
     	$this->db->from('ongkir_ref_location orl');
-    	$this->db->join('ongkir_ref_district ord','ord.id = orl.district_id','left');
-    	$this->db->join('ongkir_ref_city orc','orc.id = orl.city_id','inner');
-    	$this->db->join('ongkir_ref_state ors','ors.id = orl.state_id','inner');
-    	$this->db->like('ord.name',$text);
-    	$this->db->or_like('orc.name',$text);
-    	$this->db->or_like('ors.name',$text);
-    	$this->db->order_by('ord.name', 'orl.id');
+    	$this->db->like('orl.district_name',$text);
+    	$this->db->or_like('orl.city_name',$text);
+    	$this->db->or_like('orl.state_name',$text);
+    	$this->db->order_by('orl.district_name', 'orl.id');
     	$this->db->limit($this->search_limit);
 
 
@@ -193,22 +207,23 @@ class BasicDataModel extends CI_Model {
 		return $district_results[0];			
 	}
         
-        public function get_all_origin() {
-            $this->db->select('orl.id,orl.city_name as name',false);
-            $this->db->from('ongkir_ref_location orl');
-            $this->db->where(array('orl.district_id'=>null));
-            $this->db->order_by('orl.city_name');
-            
-            $query = $this->db->get();
-            
-            $origins = array();
-            foreach ($query->result() as $row)
-            {
-                    $origins[] = $row;
-            }
 
-            return $origins;
+    public function get_all_origin() {
+        $this->db->select('orl.id,orl.city_name as name',false);
+        $this->db->from('ongkir_ref_location orl');
+        $this->db->where(array('orl.district_id'=>null));
+        $this->db->order_by('orl.city_name');
+        
+        $query = $this->db->get();
+        
+        $origins = array();
+        foreach ($query->result() as $row)
+        {
+                $origins[] = $row;
         }
+
+        return $origins;
+    }
     
 
 }

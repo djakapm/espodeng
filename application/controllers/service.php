@@ -55,6 +55,29 @@ class Service extends CI_Controller {
 	//   }
 	// }
 
+	public function origin_location(){
+		// $json_response = array(3728=>'Tanah Abang,Jakarta Pusat,Indonesia',4551=>'Mojokerto, Jawa Tengah, Indonesia');
+		if(empty($_GET)){
+			echo json_encode(array());
+			return;
+		}
+
+		// $text = $_GET['q'];
+		$text = $_GET['search'];
+		if(empty($text)){
+			echo json_encode(array());
+		}
+		else{
+			$result = $this->basicdata->search_origin_location($this->basicdata->get_registry_as_string('ongkir_logistic_service')
+			,$text);
+			$json_response = array();
+			foreach($result as $key => $value){
+				$json_response[] = array('id'=>$key,'text'=>$value[0]);
+			}
+			echo json_encode($json_response);
+		}
+	}
+
 
 	public function location(){
 		// $json_response = array(3728=>'Tanah Abang,Jakarta Pusat,Indonesia',4551=>'Mojokerto, Jawa Tengah, Indonesia');
@@ -96,7 +119,7 @@ class Service extends CI_Controller {
 		if($is_supported){
 
 			//Currrently only service 'Jakarta to ...'
-			$origin_id = 2272; //Jakarta Pusat district
+			// $origin_id = 2272; //Jakarta Pusat district
 			if($weight < 1){$weight = 1;}
 			$source_table = $this->basicdata->current_logistic_service_table();
 			//JNE

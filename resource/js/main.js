@@ -256,7 +256,7 @@ var base_url = 'http://localhost/app/ongkir/';
 	 
 	if($.find('#origin-input').length > 0)	
 	$('#origin-input').jsonSuggest({
-		data: [{id: 2272,text: 'Jakarta',}],minCharacters:3,onSelect:origin_callback
+		url:base_url+'index.php/service/origin_location',minCharacters:3,onSelect:origin_callback
 	});
 
 	if($.find('#destination-input').length > 0)
