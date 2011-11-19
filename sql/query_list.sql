@@ -19,4 +19,9 @@ left join ongkir_ref_district ord on ord.id = orl.district_id
 inner join ongkir_ref_city orc on orc.id = orl.city_id
 where orl.id=5735;
 
-	
+#Get Origin Location for Frontend
+
+select orl.id,orl.state_name from ongkir_ref_location orl where orl.id = 
+(select distinct(ols.origin_id) from ongkir_logistic_service_19112011 ols)
+where orl.state_name like '%jakarta%'
+order by orl.state_name,orl.id;
