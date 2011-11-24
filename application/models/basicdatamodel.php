@@ -68,10 +68,10 @@ class BasicDataModel extends CI_Model {
     	$this->db->where(array('location.id'=>$location_id));
     	$query = $this->db->get();
     	foreach($query->result() as $row){
-    		if(in_array($row->state_id,$supported_origin_state_ids)){
+    	//	if(in_array($row->state_id,$supported_origin_state_ids)){
     			$is_supported = TRUE;
     			break;
-    		}
+    	//	}
     	}
     	
     	return $is_supported;
