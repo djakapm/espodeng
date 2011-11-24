@@ -162,27 +162,27 @@ class Admin extends CI_Controller {
 
 		if ( ! $this->upload->do_upload('upload-input'))
 		{
-			$error = array('error' => $this->upload->display_errors());
-			print_r($error);
+                    $error = array('error' => $this->upload->display_errors());
+                    print_r($error);
 		}
 		else
 		{
-	        $upload_data = $this->upload->data();
-			$product = $this->update->parse_file($upload_data['full_path']);
-			$csv_data = $product['csv_data'];
-			$all_district_count = $product['district_count'];
-			$ambigous_district_count = $product['ambigous_district_count'];;
-			$unguessed_district_count = $product['unguessed_district_count'];
+                    $upload_data = $this->upload->data();
+                    $product = $this->update->parse_file($upload_data['full_path']);
+                    $csv_data = $product['csv_data'];
+                    $all_district_count = $product['district_count'];
+                    $ambigous_district_count = $product['ambigous_district_count'];;
+                    $unguessed_district_count = $product['unguessed_district_count'];
 
-			$this->data['origin_districts'] = $this->get_origin_districts();
-			$this->data['logistic_companies'] = $this->get_logistic_companies();
-			$this->data['logistic_service_types'] = $this->get_logistic_service_types();
-			$this->data['current_file'] = $upload_data['orig_name'];
-			$this->data['csv_data'] = $csv_data;
-			$this->data['all_district_count'] = $all_district_count;
-			$this->data['ambigous_district_count'] = $ambigous_district_count;
-			$this->data['unguessed_district_count'] = $unguessed_district_count;
-			$this->load->view('admin/upload_data_page',$this->data);
+                    $this->data['origin_districts'] = $this->get_origin_districts();
+                    $this->data['logistic_companies'] = $this->get_logistic_companies();
+                    $this->data['logistic_service_types'] = $this->get_logistic_service_types();
+                    $this->data['current_file'] = $upload_data['orig_name'];
+                    $this->data['csv_data'] = $csv_data;
+                    $this->data['all_district_count'] = $all_district_count;
+                    $this->data['ambigous_district_count'] = $ambigous_district_count;
+                    $this->data['unguessed_district_count'] = $unguessed_district_count;
+                    $this->load->view('admin/upload_data_page',$this->data);
 		}		
 	}
 
