@@ -315,7 +315,7 @@ class UpdateModel extends CI_Model {
         
         // remove kota and kab from city
         $city_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
-        $district_name = trim(preg_replace('/((kepulauan)|(kota))+/i','',$district_name));
+        $district_name = trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$district_name));
         
         // filter cites for the best match
         foreach($rows as $row){
@@ -331,8 +331,6 @@ class UpdateModel extends CI_Model {
                 
         }
         
-       
-        
         
         // filter again for districts to reduce suggestion
         if (!empty($district_name)) {
@@ -345,8 +343,10 @@ class UpdateModel extends CI_Model {
             foreach($final_rows as $row) {
                 if (isset($row->district_name)) {
                     
+                    $tmp_district_name = strtolower(trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$row->district_name)));
+                    
                     // check full district name
-                    similar_text(strtolower($row->district_name), strtolower($district_name), $percentage);
+                    similar_text($tmp_district_name, strtolower($district_name), $percentage);
                     
                     if($percentage >= $best_match_percentage){
                         // great we found best match just return this single row;
@@ -356,12 +356,13 @@ class UpdateModel extends CI_Model {
                     } else {
                         
                         if ($percentage >= $minimum_match_percentage_district) {
+                            //error_log($district_name . " > ". $tmp_district_name ." [".$percentage."]");
                             $new_final_rows[] = $row;
                         } else {
                             // too low match percentage, try tokenizing
                             foreach ($district_tokens as $district_token) {
 
-                                similar_text(strtolower($row->district_name), strtolower($district_token), $percentage);
+                                similar_text($tmp_district_name, strtolower($district_token), $percentage);
 
                                 if($percentage >= $best_match_percentage){
                                     // great we found best match just return this single row;
@@ -401,21 +402,22 @@ class UpdateModel extends CI_Model {
             $new_final_rows = array();
             foreach($rows as $row){
 
-                if (empty($rows->district_name)) {
+                if (empty($row->district_name)) {
                     
                     // check city
                     similar_text(strtolower($row->city_name), strtolower($city_name), $percentage);
-
-                    if($percentage >= $max_p){
-                        $final_rows = array();
-                        $final_rows[] = $row;
+                    
+                    if ($percentage > $max_p) {
+                        $new_final_rows = array();
+                        $new_final_rows[] = $row;
                         $max_p = $percentage;
                     }
                 }
 
             }
             
-            $final_row = $new_final_rows;
+            
+            $final_rows = $new_final_rows;
         }
         
         return $final_rows;
@@ -432,7 +434,12 @@ class UpdateModel extends CI_Model {
     	foreach($rows as $row){
     		$district_name = (property_exists($row,'district_name') ? $row->district_name : '');
     		$city_name = $row->city_name;
-    		$search_result[$row->id] = (!empty($district_name)?$district_name:'Kota/Kab').' ('.$row->id.'), '.$city_name;
+                
+                if (!empty($district_name)) {
+                    $search_result[$row->id] = (!empty($district_name)?$district_name:'Kota/Kab').' ('.$row->id.'), '.$city_name;
+                } else {
+                    $search_result[$row->id] = $city_name . ' ('.$row->id.')';
+                }
     	}
 
     	return $search_result;
