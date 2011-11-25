@@ -44,16 +44,16 @@ class BasicDataModel extends CI_Model {
 
 
     public function search_origin_location($source_table,$text){
-		$this->db->select('orl.id,orl.city_name',FALSE);
-		$this->db->from('ongkir_ref_location orl');
-		$this->db->where('orl.id = (select distinct(ols.origin_id) from '.$source_table.' ols)',NULL,FALSE);
+        $this->db->select('orl.id,orl.city_name',FALSE);
+        $this->db->from('ongkir_ref_location orl');
+        $this->db->where('orl.id in (select distinct(ols.origin_id) from '.$source_table.' ols)',NULL,FALSE);
     	$this->db->like('orl.city_name',$text);
     	$this->db->order_by('orl.city_name', 'orl.id');
     	$this->db->limit($this->search_limit);
         $query = $this->db->get();
     	foreach($query->result() as $row){
-    		$city_name = $row->city_name;
-   			$search_result[$row->id] = array($city_name);
+            $city_name = $row->city_name;
+            $search_result[$row->id] = array($city_name);
     	}
 
     	return $search_result;
@@ -68,10 +68,10 @@ class BasicDataModel extends CI_Model {
     	$this->db->where(array('location.id'=>$location_id));
     	$query = $this->db->get();
     	foreach($query->result() as $row){
-    		if(in_array($row->state_id,$supported_origin_state_ids)){
+    	//	if(in_array($row->state_id,$supported_origin_state_ids)){
     			$is_supported = TRUE;
     			break;
-    		}
+    	//	}
     	}
     	
     	return $is_supported;
