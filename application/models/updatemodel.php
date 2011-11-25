@@ -315,7 +315,7 @@ class UpdateModel extends CI_Model {
         
         // remove kota and kab from city
         $city_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
-        
+        $district_name = trim(preg_replace('/((kepulauan)|(kota))+/i','',$district_name));
         
         // filter cites for the best match
         foreach($rows as $row){
