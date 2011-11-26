@@ -1,77 +1,133 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class BusinessModel extends CI_Model {
-		private $min_total_price = 0;
-		private $min_delivery_time = 0;
-		private $avg_total_price = 0;
-		private $avg_delivery_time = 0;
+	private $min_total_price = 0;
+	private $min_delivery_time = 0;
+	private $avg_total_price = 0;
+	private $avg_delivery_time = 0;
+
+	private $price_weight = 0.4;
+	private $delivery_time_weight = 0.6;
 
 	public function logistic_rank($logistic_data){
-		if(empty($logistic_data)){return;}
-		$average = $this->average($logistic_data,'total_price');
-		$below_average = array();
-		$above_average = array();
+		$weighted_average = $this->business->weighted_average($logistic_data);
+		$average = $this->business->average($logistic_data,$weighted_average);
 
-		foreach($logistic_data as $logistic_datum){
-			if($logistic_datum['total_price'] <= $average){
-				$below_average[] = $logistic_datum;
-			}
-			else{
-				$logistic_datum['rank'] = 1;
-				$above_average[] = $logistic_datum;
-			}
+		$logistic_data = $this->business->below_average_pivot_filter($logistic_data,$average);
+
+		$logistic_data = $this->business->calculate_oke_score($logistic_data);
+
+		$logistic_data = $this->business->calculcate_weighted_oke_score($logistic_data,
+			$this->price_weight,$this->delivery_time_weight);
+		
+		$logistic_data = $this->business->calculate_final_score($logistic_data);
+		
+		return $logistic_data;	
+	}
+
+
+
+
+	public function update_data_with_final_score($data,$final_scores){
+		$new_data = array();
+		foreach($data as $key=>$value){
+			$new_value = $value;
+			$new_value['final_score'] = (array_key_exists($key,$final_scores) ? $final_scores[$key]['final_score'] : 1);	
+			$new_data[$key] = $new_value;
 		}
-		$this->avg_total_price = $this->average($below_average,'total_price');
-		$this->avg_delivery_time = $this->average($below_average,'delivery_time');
 
-		$counter = 0;
+		return $new_data;
+	}
+
+	public function below_average_pivot_filter($data,$average){
 		$results = array();
-		foreach($below_average as $item){
-			$this->min_total_price = $this->minimum(array_slice($below_average,$counter),'total_price',$this->avg_total_price);
-			$this->min_delivery_time = $this->minimum(array_slice($below_average,$counter),'delivery_time',$this->avg_delivery_time);
-			$item['rank'] = $this->rank_weight($item['total_price'],$item['delivery_time']);
-			$results[] = $item;
-			$counter++;
-		}
-		$results = array_merge($results,$above_average);
-		return $results;
-
-	}
-
-	private function rank_weight($total_price,$delivery_time){
-		$total_price_weight = 0.7;
-		$delivery_time_weight = 0.3;
-		$rank = 0;
-		$total_price_oke_score = $total_price/$this->min_total_price;
-		$total_price_weight_oke_score = $total_price_oke_score*$total_price_weight;
-
-		$delivery_time_oke_score = round($delivery_time/$this->min_delivery_time,1);
-
-		$delivery_time_weight_oke_score = round($delivery_time_oke_score*$delivery_time_weight,1);
-
-		$rank = round(($total_price_weight_oke_score+$delivery_time_weight_oke_score)/2,1);
-		return round($rank,2);
-	}
-
-	private function minimum($below_average,$key,$default_value){
-		$min = PHP_INT_MAX;
-		foreach($below_average as $item){
-			$value = $item[$key];
-			if($value < $min){
-				$min = $value;
+		foreach($data as $key=>$value){
+			if($value['total_price'] <= $average){
+				$results[$key] = $value;
 			}
 		}
 
-		return $min;
+		return $results;
 	}
 
-	private function average($logistic_data,$key){
-		$sum = 0;
-		foreach($logistic_data as $logistic_datum){
-			$sum += $logistic_datum[$key];
+	public function calculate_final_score($data){
+		$new_data = array();
+		foreach($data as $key=>$value){
+			$new_value = $value;
+			$result = ($value['total_weighted_oke_score']+$value['delivery_time_weighted_oke_score'])/2;
+			$new_value['final_score'] = $result;
+			$new_data[$key] = $new_value;
 		}
-		$avg = $sum/count($logistic_data);
-		return $avg;
+
+		return $new_data;
+	}
+
+	public function calculcate_weighted_oke_score($data,$total_weight,$delivery_time_weight){
+		$new_data = array();
+
+		foreach($data as $key=>$value){
+			$new_value = $value;
+			$new_value['total_weighted_oke_score'] = $value['total_oke_score'] * $total_weight;
+			$new_value['delivery_time_weighted_oke_score'] = $value['delivery_time_oke_score'] * $delivery_time_weight;			
+			$new_data[$key] = $new_value;
+
+		}
+
+		return $new_data;
+	}
+
+	public function calculate_oke_score($data){
+		$new_data = array();
+		$totals = $this->extract($data,'total_price');
+
+		$delivery_times = $this->extract($data,'delivery_time');
+		$count = count($totals);
+		$total_avg = array_sum($totals)/$count;
+		$delivery_time_avg = array_sum($delivery_times)/$count;
+		$counter = 0;
+		foreach($data as $key=>$value){
+			$new_value = $value;
+			$total_dividers = $this->extract(array_slice($data,$counter),'total_price');
+			$total_dividers[] = $total_avg;
+			$delivery_time_dividers = $this->extract(array_slice($data,$counter),'delivery_time');
+			
+			$new_value['total_oke_score']	= $value['total_price']/min($total_dividers);
+			$new_value['delivery_time_oke_score']	= $value['delivery_time']/min($delivery_time_dividers);
+			$new_data[$key] = $new_value;
+			$counter++;
+		}	
+
+		return $new_data;
+	}
+
+
+	public function average($data,$weighted_average){
+		$result = 0;
+		$totals = $this->extract($data,'total_price');
+		$sum = array_sum($totals);
+		$count = count($totals);
+		$result = $sum/$count + min(10000,$weighted_average);
+		return $result;
+	}
+
+	public function weighted_average($data){
+		$weighted_average = 0;
+		$totals = $this->extract($data,'total_price');
+
+		$max = max($totals);
+		$min = min($totals);
+		$count = count($totals);
+		$weighted_average = ($max-$min)/$count;			
+		return $weighted_average;
+	}
+
+	private function extract($data,$property){
+		$results = array();
+		foreach($data as $key=>$value){
+			$results[] = $value[$property];
+		}
+
+		return $results;
 	}
 }
 ?>

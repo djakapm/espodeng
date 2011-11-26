@@ -14,16 +14,7 @@ class Service extends CI_Controller {
 
 	}
 
-	public function index(){
-		$results = array(
-			array('name'=>'a','total_price'=>6000,'delivery_time'=>4),
-			array('name'=>'b','total_price'=>7500,'delivery_time'=>3),
-			array('name'=>'c','total_price'=>18000,'delivery_time'=>2),
-			array('name'=>'d','total_price'=>25000,'delivery_time'=>1)		
-		);
-		
-		print_r($this->business->logistic_rank($results));
-	}
+	public function index(){}
 
 	public function validate(){
 		// $data = array();
