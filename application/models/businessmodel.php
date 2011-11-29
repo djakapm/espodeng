@@ -81,7 +81,7 @@ class BusinessModel extends CI_Model {
 		$totals = $this->extract($data,'total_price');
 
 		$delivery_times = $this->extract($data,'delivery_time');
-		$count = count($totals);
+		$count = empty($totals) ? 1: count($totals);
 		$total_avg = array_sum($totals)/$count;
 		$delivery_time_avg = array_sum($delivery_times)/$count;
 		$counter = 0;
@@ -105,7 +105,7 @@ class BusinessModel extends CI_Model {
 		$result = 0;
 		$totals = $this->extract($data,'total_price');
 		$sum = array_sum($totals);
-		$count = count($totals);
+		$count = empty($totals) ? 1 : count($totals);
 		$result = $sum/$count + min(10000,$weighted_average);
 		return $result;
 	}
@@ -114,9 +114,9 @@ class BusinessModel extends CI_Model {
 		$weighted_average = 0;
 		$totals = $this->extract($data,'total_price');
 
-		$max = max($totals);
-		$min = min($totals);
-		$count = count($totals);
+		$max = empty($totals) ? 1 : max($totals);
+		$min = empty($totals) ? 1 : min($totals);
+		$count = empty($totals) ? 1 : count($totals);
 		$weighted_average = ($max-$min)/$count;			
 		return $weighted_average;
 	}
