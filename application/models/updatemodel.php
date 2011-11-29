@@ -129,22 +129,22 @@ class UpdateModel extends CI_Model {
 
     private function compose_data($csv_datum){
         $presentation_datum = array();
-            $district = $this->guess_location($csv_datum[3],$csv_datum[2]);
-            
-            $presentation_datum[] = $csv_datum[0];
-            $presentation_datum[] = $csv_datum[1];
-            $presentation_datum[] = $csv_datum[2];
-            $presentation_datum[] = $csv_datum[3];
-            $presentation_datum[] = $csv_datum[4];
-            $presentation_datum[] = $csv_datum[5];
-            $presentation_datum[] = $csv_datum[6];
-            
-            if(empty($district)){
-                $presentation_datum[] = array();
-            }
-            else{
-                $presentation_datum[] = $district;
-            }
+        $district = $this->guess_location($csv_datum[3],$csv_datum[2]);
+
+        $presentation_datum[] = $csv_datum[0];
+        $presentation_datum[] = $csv_datum[1];
+        $presentation_datum[] = $csv_datum[2];
+        $presentation_datum[] = $csv_datum[3];
+        $presentation_datum[] = $csv_datum[4];
+        $presentation_datum[] = $csv_datum[5];
+        $presentation_datum[] = $csv_datum[6];
+
+        if(empty($district)){
+            $presentation_datum[] = array();
+        }
+        else{
+            $presentation_datum[] = $district;
+        }
 
         return $presentation_datum;
         
@@ -292,28 +292,154 @@ class UpdateModel extends CI_Model {
         
         return $final_rows;
     }
+    
+    private function look_for_location($city_name, $district_name){
+        // config&return vars
+        $final_rows = array();
+        $best_match_percentage = 88;
+        $minimum_match_percentage_city = 70;
+        $minimum_match_percentage_district = 50;
+        
+        // get data from location table
+        if(empty($this->district_cache)){
+            $this->db->select('orl.id,orl.district_name,orl.city_name');
+            $this->db->from('ongkir_ref_location orl');
+            $this->db->where('orl.city_name is not null');
+            $query = $this->db->get();
+            $rows = $query->result();
+            $this->district_cache = $rows;
+        }
+        else{
+            $rows = $this->district_cache;
+        }
+        
+        // remove kota and kab from city
+        $city_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
+        $district_name = trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$district_name));
+        
+        // filter cites for the best match
+        foreach($rows as $row){
+            
+            // check city
+            similar_text(strtolower($row->city_name), strtolower($city_name), $percentage);
+
+            if($percentage >= $minimum_match_percentage_city){
+                $final_rows[] = $row;
+            }
+            
+            //error_log($city_name . " => " .$row->city_name ." [".$percentage."%]");
+                
+        }
+        
+        
+        // filter again for districts to reduce suggestion
+        if (!empty($district_name)) {
+            // split district_name
+            $district_tokens = preg_split("/[\/,]+/", $district_name);
+            
+            $new_final_rows = array();
+            
+            $exit_loop = false;
+            foreach($final_rows as $row) {
+                if (isset($row->district_name)) {
+                    
+                    $tmp_district_name = strtolower(trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$row->district_name)));
+                    
+                    // check full district name
+                    similar_text($tmp_district_name, strtolower($district_name), $percentage);
+                    
+                    if($percentage >= $best_match_percentage){
+                        // great we found best match just return this single row;
+                        $new_final_rows = array();
+                        $new_final_rows[] = $row;
+                        break;
+                    } else {
+                        
+                        if ($percentage >= $minimum_match_percentage_district) {
+                            //error_log($district_name . " > ". $tmp_district_name ." [".$percentage."]");
+                            $new_final_rows[] = $row;
+                        } else {
+                            // too low match percentage, try tokenizing
+                            foreach ($district_tokens as $district_token) {
+
+                                similar_text($tmp_district_name, strtolower($district_token), $percentage);
+
+                                if($percentage >= $best_match_percentage){
+                                    // great we found best match just return this single row;
+                                    $new_final_rows = array();
+                                    $new_final_rows[] = $row;
+                                    $exit_loop = true;
+                                    break;
+                                }
+                                else
+                                if ($percentage >= $minimum_match_percentage_district) {
+                                    $new_final_rows[] = $row;
+                                }
+                            }
+                            
+                            if ($exit_loop) {
+                                break;
+                            }
+                            // end tokenize
+                        }
+                        
+                    }
+                    
+                    
+                } else {
+                    // just include city with no district
+                    $new_final_rows[] = $row;
+                }
+            }
+            
+            $final_rows = $new_final_rows;
+            
+        } else {
+            // no district, return city with no district
+            // with the best match only (if exists) 
+            // this will reduce suggestion number
+            $max_p = $minimum_match_percentage_city;
+            $new_final_rows = array();
+            foreach($rows as $row){
+
+                if (empty($row->district_name)) {
+                    
+                    // check city
+                    similar_text(strtolower($row->city_name), strtolower($city_name), $percentage);
+                    
+                    if ($percentage > $max_p) {
+                        $new_final_rows = array();
+                        $new_final_rows[] = $row;
+                        $max_p = $percentage;
+                    }
+                }
+
+            }
+            
+            
+            $final_rows = $new_final_rows;
+        }
+        
+        return $final_rows;
+    }
 
 
     public function guess_location($district_name,$city_name){
-        if(empty($district_name)){
-                $rows = $this->look_for_city($city_name);
-            if(empty($rows)){
-                $rows = $this->look_for_district($city_name);
-            }            
-        }
-        else{
-            $rows = $this->look_for_district($district_name);
-            if(empty($rows)){
-                $rows = $this->look_for_city($district_name);
-            }            
-        }
+        
+        // find best match location
+        $rows = $this->look_for_location($city_name, $district_name);
 
-
+        // prepare the output
     	$search_result = array();
     	foreach($rows as $row){
     		$district_name = (property_exists($row,'district_name') ? $row->district_name : '');
     		$city_name = $row->city_name;
-    		$search_result[$row->id] = $district_name.' ('.$row->id.'), '.$city_name;
+                
+                if (!empty($district_name)) {
+                    $search_result[$row->id] = (!empty($district_name)?$district_name:'Kota/Kab').' ('.$row->id.'), '.$city_name;
+                } else {
+                    $search_result[$row->id] = $city_name . ' ('.$row->id.')';
+                }
     	}
 
     	return $search_result;
