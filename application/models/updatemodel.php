@@ -298,7 +298,7 @@ class UpdateModel extends CI_Model {
         $final_rows = array();
         $best_match_percentage = 88;
         $minimum_match_percentage_city = 70;
-        $minimum_match_percentage_district = 50;
+        $minimum_match_percentage_district = 70;
         
         // get data from location table
         if(empty($this->district_cache)){
