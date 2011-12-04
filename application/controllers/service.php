@@ -116,10 +116,7 @@ class Service extends CI_Controller {
             //JNE
             $logistic_services = $this->jne->get_logistic_service($origin_id, $destination_id, $weight, $source_table);
 
-            error_log('final result: ' . var_export($logistic_services, true));
-
             if ($logistic_services === FALSE) {
-                error_log('final status: ' . false);
                 $jne_result = array('status' => 404, 'message' => 'Not Found');
             } else {
                 $jne_result = array('status' => 200);

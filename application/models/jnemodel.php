@@ -56,13 +56,9 @@ class JNEModel extends CI_Model {
         $logistic_service_results = $logistic_service_query->result();
 
         
-        error_log('jne: '.$this->db->last_query());
-        error_log('result: '.var_export($logistic_service_results,true));
         
         if (empty($logistic_service_results)) {
 
-            error_log('jne2');
-            
             // query with nodistrict
             $this->db->select('orst.name service_name,ols.delivery_time,ols.unit_price');
             $this->db->from($table . ' ols');
@@ -72,13 +68,10 @@ class JNEModel extends CI_Model {
             $logistic_service_query = $this->db->get();
             $logistic_service_results = $logistic_service_query->result();
             
-            
-            error_log('jne2: '.$this->db->last_query());
         }
         
 
         if (empty($logistic_service_results)) {
-            error_log('product empty');
             return FALSE;
         } else {
             foreach ($logistic_service_results as $target) {
@@ -91,8 +84,6 @@ class JNEModel extends CI_Model {
             }
             
             
-            error_log('product: '.var_export($product, true));
-        
         }
 
         return $product;
