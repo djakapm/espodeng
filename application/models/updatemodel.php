@@ -321,13 +321,16 @@ class UpdateModel extends CI_Model {
         foreach($rows as $row){
             
             // check city
-            similar_text(strtolower($row->city_name), strtolower($city_name), $percentage);
+            
+            $dbcity_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$row->city_name));
+            
+            similar_text(strtolower($dbcity_name), strtolower($city_name), $percentage);
 
             if($percentage >= $minimum_match_percentage_city){
                 $final_rows[] = $row;
             }
             
-            //error_log($city_name . " => " .$row->city_name ." [".$percentage."%]");
+            //error_log($city_name . " => " .$dbcity_name ." [".$percentage."%]");
                 
         }
         
@@ -404,14 +407,19 @@ class UpdateModel extends CI_Model {
 
                 if (empty($row->district_name)) {
                     
+                    $dbcity_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$row->city_name));
+                    
                     // check city
-                    similar_text(strtolower($row->city_name), strtolower($city_name), $percentage);
+                    similar_text(strtolower($dbcity_name), strtolower($city_name), $percentage);
                     
                     if ($percentage > $max_p) {
                         $new_final_rows = array();
                         $new_final_rows[] = $row;
                         $max_p = $percentage;
+                        
+                        error_log ($dbcity_name . ' => ' . $city_name);
                     }
+                    
                 }
 
             }
