@@ -417,7 +417,7 @@ class UpdateModel extends CI_Model {
                         $new_final_rows[] = $row;
                         $max_p = $percentage;
                         
-                        error_log ($dbcity_name . ' => ' . $city_name);
+                        //error_log ($dbcity_name . ' => ' . $city_name);
                     }
                     
                 }
