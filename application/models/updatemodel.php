@@ -356,7 +356,7 @@ class UpdateModel extends CI_Model {
 
             $r =  (object)array("id"=>$trie_loc_id, "district_name"=>$district_name,"city_name"=>$city_name);
             
-            error_log('oioi '. $trie_loc_id. '=>'.var_export($r, true));
+            //error_log('oioi '. $trie_loc_id. '=>'.var_export($r, true));
             
             return array($r);
         }
