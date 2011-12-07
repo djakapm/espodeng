@@ -321,7 +321,7 @@ class UpdateModel extends CI_Model {
                 if (empty($dn)) {
                     $dn = "-";
                 } else {
-                    $dn = trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$dn));
+                    $dn = trim(preg_replace('/((kec\\.)|(kec)|(kepulauan)|(kota))+/i','',$dn));
                 }
                 
                 if (empty($cn)) {
@@ -342,7 +342,7 @@ class UpdateModel extends CI_Model {
         
         // remove kota and kab from city
         $city_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
-        $district_name = trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$district_name));
+        $district_name = trim(preg_replace('/((kec\\.)|(kec)|(kepulauan)|(kota))+/i','',$district_name));
         
         
         $trie_loc = (empty($district_name)?"-":$district_name)."#".(empty($city_name)?"-":$city_name);;
