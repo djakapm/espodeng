@@ -30,7 +30,7 @@ order by orl.city_name,orl.id;
 #ongkir_ref_origin_location
 
 CREATE TABLE `ongkir_ref_origin_location` (
- `id` int(11) NOT NULL,
+ `location_id` int(11) NOT NULL,
  `name` varchar(200) NOT NULL,
  PRIMARY KEY (`name`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Hold supported origin location'
