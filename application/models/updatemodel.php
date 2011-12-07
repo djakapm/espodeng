@@ -1,9 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require_once 'trie.class.php';
+
 class UpdateModel extends CI_Model {
 
     private $district_cache = array();
     private $city_cache = array();
+    private $trie_loc_cache;
 
     function __construct()
     {
@@ -308,6 +311,30 @@ class UpdateModel extends CI_Model {
             $query = $this->db->get();
             $rows = $query->result();
             $this->district_cache = $rows;
+            
+            $this->trie_loc_cache = new Trie();
+            
+            foreach ($rows as $row) {
+                $dn = $row->district_name;
+                $cn = $row->city_name;
+                
+                if (empty($dn)) {
+                    $dn = "-";
+                } else {
+                    $dn = trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$dn));
+                }
+                
+                if (empty($cn)) {
+                    $cn = "-";
+                } else {
+                    // filter
+                    $cn = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$cn));
+                }
+                
+                
+                
+                $this->trie_loc_cache->add($dn."#".$cn, $row->id);
+            }
         }
         else{
             $rows = $this->district_cache;
@@ -316,6 +343,23 @@ class UpdateModel extends CI_Model {
         // remove kota and kab from city
         $city_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
         $district_name = trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$district_name));
+        
+        
+        $trie_loc = (empty($district_name)?"-":$district_name)."#".(empty($city_name)?"-":$city_name);;
+        
+        $trie_loc_id = $this->trie_loc_cache->search($trie_loc);
+        if ($trie_loc_id) {
+            
+//            $r->id = $trie_loc_id;
+//            $r->district_name = $district_name;
+//            $r->city_name = $city_name;
+
+            $r =  (object)array("id"=>$trie_loc_id, "district_name"=>$district_name,"city_name"=>$city_name);
+            
+            //error_log('oioi '. $trie_loc_id. '=>'.var_export($r, true));
+            
+            return array($r);
+        }
         
         // filter cites for the best match
         foreach($rows as $row){
