@@ -524,7 +524,7 @@ class UpdateModel extends CI_Model {
            $this->db->delete('ongkir_ref_origin_location',array('name'=>$name));
        }
 
-       $this->db->insert('ongkir_ref_origin_location',array('id'=>$origin_id,'name'=>$name));
+       $this->db->insert('ongkir_ref_origin_location',array('location_id'=>$origin_id,'name'=>$name));
   }
 
 
