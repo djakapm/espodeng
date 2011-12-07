@@ -205,9 +205,23 @@ class UpdateModel extends CI_Model {
         
     }
 
-    public function create_or_replace_incremented_table($incremented_table_name,$original_table_name){
+    public function create_or_replace_incremented_table($incremented_table_name){
         $this->db->query('drop table if exists '.$incremented_table_name,FALSE);
-        $this->db->query('create table '.$incremented_table_name.' like '.$original_table_name,FALSE);        
+
+         $query = 'create table '.$incremented_table_name.' (';
+         $query .= 'id int(11) not null auto_increment,';
+         $query .= 'service_type_id int(2) not null,';
+         $query .= 'company_id int(11) not null,';
+         $query .= 'origin_id int(11) not null,';
+         $query .= 'destination_id int(11) not null,';
+         $query .= 'unit_price decimal(10,0) not null,';
+         $query .= 'next_unit_price int(11) not null,';
+         $query .= 'delivery_time varchar(10) not null,';
+         $query .= 'primary key (id)';
+         $query .= ') engine=myisam auto_increment=0 default charset=utf8 comment="logistic service"';
+
+
+        $this->db->query($query,FALSE);        
     }
 
     public function create_incremented_table_name($table_name){
@@ -497,6 +511,21 @@ class UpdateModel extends CI_Model {
     	return $search_result;
 
     }
+
+    public function insert_data_to_origin_table($origin_id){
+       $query = $this->db->get_where('ongkir_ref_location ', array('id' => $origin_id));
+       $rows = $query->result();
+       $row = $rows[0];
+       $name = (empty($row->district_name)? $row->city_name : $row->district_name);
+
+       $query = $this->db->get_where('ongkir_ref_origin_location',array('name'=>$name));
+       $rows = $query->result();
+       if(!empty($rows)){
+           $this->db->delete('ongkir_ref_origin_location',array('name'=>$name));
+       }
+
+       $this->db->insert('ongkir_ref_origin_location',array('id'=>$origin_id,'name'=>$name));
+  }
 
 
 }
