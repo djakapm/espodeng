@@ -121,6 +121,9 @@ class UpdateModel extends CI_Model {
         $this->db->select('orc.id as city_id,ors.id as state_id, orc.name as city_name, ors.name as state_name');        
         $this->db->from('ongkir_ref_city orc');
         $this->db->join('ongkir_ref_state ors','ors.id = orc.state_id','inner');
+        $this->db->where("lower(orc.name) not like 'kab.%'");
+        $this->db->where("lower(orc.name) not like 'kabupaten%'");
+        
         $query = $this->db->get();
         $rows = $query->result();
         foreach($rows as $row){
@@ -310,6 +313,14 @@ class UpdateModel extends CI_Model {
         return $final_rows;
     }
     
+    private function trim_city($city_name) {
+        return trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
+    }
+    
+    private function trim_district($district_name) {
+        return trim(preg_replace('/((kec\\.)|(kec)|(kepulauan)|(kota))+/i','',$district_name));
+    }
+    
     private function look_for_location($city_name, $district_name){
         // config&return vars
         $final_rows = array();
@@ -335,17 +346,15 @@ class UpdateModel extends CI_Model {
                 if (empty($dn)) {
                     $dn = "-";
                 } else {
-                    $dn = trim(preg_replace('/((kec\\.)|(kec)|(kepulauan)|(kota))+/i','',$dn));
+                    $dn = $this->trim_district($dn);
                 }
                 
                 if (empty($cn)) {
                     $cn = "-";
                 } else {
                     // filter
-                    $cn = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$cn));
+                    $cn = $this->trim_city($cn);
                 }
-                
-                
                 
                 $this->trie_loc_cache->add($dn."#".$cn, $row->id);
             }
@@ -355,8 +364,8 @@ class UpdateModel extends CI_Model {
         }
         
         // remove kota and kab from city
-        $city_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
-        $district_name = trim(preg_replace('/((kec\\.)|(kec)|(kepulauan)|(kota))+/i','',$district_name));
+        $city_name = $this->trim_city($city_name);
+        $district_name = $this->trim_district($district_name);
         
         
         $trie_loc = (empty($district_name)?"-":$district_name)."#".(empty($city_name)?"-":$city_name);;
@@ -364,10 +373,6 @@ class UpdateModel extends CI_Model {
         $trie_loc_id = $this->trie_loc_cache->search($trie_loc);
         if ($trie_loc_id) {
             
-//            $r->id = $trie_loc_id;
-//            $r->district_name = $district_name;
-//            $r->city_name = $city_name;
-
             $r =  (object)array("id"=>$trie_loc_id, "district_name"=>$district_name,"city_name"=>$city_name);
             
             //error_log('oioi '. $trie_loc_id. '=>'.var_export($r, true));
@@ -380,7 +385,7 @@ class UpdateModel extends CI_Model {
             
             // check city
             
-            $dbcity_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$row->city_name));
+            $dbcity_name = $this->trim_city($row->city_name);
             
             similar_text(strtolower($dbcity_name), strtolower($city_name), $percentage);
 
@@ -404,7 +409,7 @@ class UpdateModel extends CI_Model {
             foreach($final_rows as $row) {
                 if (isset($row->district_name)) {
                     
-                    $tmp_district_name = strtolower(trim(preg_replace('/((kec)|(kec\\.)|(kepulauan)|(kota))+/i','',$row->district_name)));
+                    $tmp_district_name = strtolower($this->trim_district($row->district_name));
                     
                     // check full district name
                     similar_text($tmp_district_name, strtolower($district_name), $percentage);
@@ -465,7 +470,7 @@ class UpdateModel extends CI_Model {
 
                 if (empty($row->district_name)) {
                     
-                    $dbcity_name = trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$row->city_name));
+                    $dbcity_name = $this->trim_city($row->city_name);
                     
                     // check city
                     similar_text(strtolower($dbcity_name), strtolower($city_name), $percentage);
