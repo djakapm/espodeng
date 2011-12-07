@@ -142,6 +142,7 @@ class Admin extends CI_Controller {
 			$table_info = 'Appending data to '.$increment_table_name.' table';			
 		}
 
+		$this->update->insert_data_to_origin_table($origin_id);
 		$unknown_districts_data = $this->update->insert_data_to_incremented_table(
 			$selected_data,$unit_prices,$next_unit_prices
 			,$delivery_times,$destination_ids,$increment_table_name,$logistic_service_type,$logistic_company_id,$origin_id

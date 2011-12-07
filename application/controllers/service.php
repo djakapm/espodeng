@@ -59,8 +59,7 @@ class Service extends CI_Controller {
         if (empty($text)) {
             echo json_encode(array());
         } else {
-            $result = $this->basicdata->search_origin_location($this->basicdata->get_registry_as_string('ongkir_logistic_service')
-                    , $text);
+            $result = $this->basicdata->search_origin_location($text);
             $json_response = array();
             foreach ($result as $key => $value) {
                 $json_response[] = array('id' => $key, 'text' => $value[0]);

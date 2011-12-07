@@ -21,7 +21,17 @@ where orl.id=5735;
 
 #Get Origin Location for Frontend
 
-select orl.id,orl.city_name from ongkir_ref_location orl where orl.id = 
-(select distinct(ols.origin_id) from ongkir_logistic_service_19112011 ols)
+select orl.id,orl.city_name from ongkir_ref_location orl where orl.id in 
+(select id from ongkir_ref_origin_location)
 and orl.city_name like '%jakarta%'
 order by orl.city_name,orl.id;
+
+
+#ongkir_ref_origin_location
+
+CREATE TABLE `ongkir_ref_origin_location` (
+ `id` int(11) NOT NULL,
+ `name` varchar(200) NOT NULL,
+ PRIMARY KEY (`name`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Hold supported origin location'
+

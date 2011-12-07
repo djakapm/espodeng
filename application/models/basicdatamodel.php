@@ -43,10 +43,10 @@ class BasicDataModel extends CI_Model {
     }
 
 
-    public function search_origin_location($source_table,$text){
+    public function search_origin_location($text){
         $this->db->select('orl.id,orl.city_name',FALSE);
         $this->db->from('ongkir_ref_location orl');
-        $this->db->where('orl.id in (select distinct(ols.origin_id) from '.$source_table.' ols)',NULL,FALSE);
+        $this->db->where('orl.id in (select id from ongkir_ref_origin_location)',NULL,FALSE);
     	$this->db->like('orl.city_name',$text);
     	$this->db->order_by('orl.city_name', 'orl.id');
     	$this->db->limit($this->search_limit);
