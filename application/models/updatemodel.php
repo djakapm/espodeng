@@ -314,7 +314,7 @@ class UpdateModel extends CI_Model {
     }
     
     private function trim_city($city_name) {
-        return trim(preg_replace('/((kota)|(kab\\.)|(kabupaten)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
+        return trim(preg_replace('/((kota)|(dki)|(daerah)|(khusus)|(administrasi)|(istimewa))+/i','',$city_name));
     }
     
     private function trim_district($district_name) {
