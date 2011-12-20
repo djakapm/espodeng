@@ -165,7 +165,17 @@ class Service extends CI_Controller {
             }
 
             //Then do the ranking for 'paling ok'
-            //$results = $this->business->logistic_rank($results);
+            $ranked_results = $this->business->logistic_rank($results);
+            $ranked_keys = array_keys($ranked_results);
+            foreach($results as $key => $value){
+                $should_update_rank = in_array($key,$ranked_keys);
+                if($should_update_rank){
+                    $results[$key]['rank'] = $ranked_results[$key]['final_score'];
+                }
+                else{
+                    $results[$key]['rank'] = 1;
+                }
+            }
 
             $json_response = array(
                 'status' => 200, 'message' => 'OK', 'origin' => 'Jakarta',
