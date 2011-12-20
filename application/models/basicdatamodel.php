@@ -78,12 +78,12 @@ class BasicDataModel extends CI_Model {
     }
 
     public function search_location($text){
-    	$this->db->select('orl.id,orl.district_name,orl.city_name,orl.state_name');
+    	$this->db->select('orl.id,orl.district_name,orl.city_name,orl.state_name, orl.district_id is null as isnull');
     	$this->db->from('ongkir_ref_location orl');
     	$this->db->like('orl.district_name',$text);
     	$this->db->or_like('orl.city_name',$text);
     	$this->db->or_like('orl.state_name',$text);
-    	$this->db->order_by('orl.district_name', 'orl.id');
+    	$this->db->order_by('isnull','orl.district_name');
     	$this->db->limit($this->search_limit);
 
 
