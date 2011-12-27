@@ -11,8 +11,10 @@ class Admin extends CI_Controller {
 		$this->load->helper('form');
 		$this->load->model('basicdatamodel','basicdata');
 		$this->load->model('updatemodel','update');
+                $this->load->model('uploadmodel','uploaddata');
 		$this->data['site_name'] = 'palingoke.info';
 		$this->data['site_title'] = 'Ongkir';
+                $this->load->library('pagination');
 	}
 
 
@@ -110,7 +112,12 @@ class Admin extends CI_Controller {
 
 	public function upload_data(){
 		if($this->validate_session()){
-			$this->load->view('admin/upload_data_page',$this->data);
+                    
+                    $this->data['origin_districts'] = $this->get_origin_districts();
+                    $this->data['logistic_companies'] = $this->get_logistic_companies();
+                    $this->data['logistic_service_types'] = $this->get_logistic_service_types();
+                    
+		    $this->load->view('admin/upload_data_page',$this->data);
 		}
 		else{
 			$this->load->view('admin/login_page',$this->data);
@@ -169,23 +176,75 @@ class Admin extends CI_Controller {
 		else
 		{
                     $upload_data = $this->upload->data();
-                    $product = $this->update->parse_file($upload_data['full_path']);
-                    $csv_data = $product['csv_data'];
-                    $all_district_count = $product['district_count'];
-                    $ambigous_district_count = $product['ambigous_district_count'];;
-                    $unguessed_district_count = $product['unguessed_district_count'];
+                    
+                    $createNewTable = $this->input->post('create_new_table');
+                    $createNewTable = empty($createNewTable)?false:true;
+                    $tableName = $this->basicdata->current_logistic_service_table();
+                    if ($createNewTable) {
+                        $newTableName = $this->update->create_incremented_table_name('ongkir_logistic_service');
+                        $this->update->create_or_replace_incremented_table($newTableName);
+                        $tableName = $newTableName;
+                    }
+                    
+                    // save upload info 
+                    $this->uploaddata->insert_temp_upload_csv_info(
+                            $this->input->post('origin_district'),
+                            $this->input->post('logistic_company'),
+                            $this->input->post('logistic_service_type'),
+                            $tableName
+                    );
+                    
+                    $this->update->insert_data_to_origin_table($this->input->post('origin_district'));
+                    
+                    // this will insert the data into temp table
+                    $product = $this->uploaddata->parse_and_insert_to_temp($upload_data['full_path']);
+                    
+                    
+                    // this will insert match data to location_service table
+                    $this->uploaddata->insert_match_data_to_incremented_table($tableName);
 
-                    $this->data['origin_districts'] = $this->get_origin_districts();
-                    $this->data['logistic_companies'] = $this->get_logistic_companies();
-                    $this->data['logistic_service_types'] = $this->get_logistic_service_types();
-                    $this->data['current_file'] = $upload_data['orig_name'];
-                    $this->data['csv_data'] = $csv_data;
-                    $this->data['all_district_count'] = $all_district_count;
-                    $this->data['ambigous_district_count'] = $ambigous_district_count;
-                    $this->data['unguessed_district_count'] = $unguessed_district_count;
-                    $this->load->view('admin/upload_data_page',$this->data);
+                    // delete match data
+                    $this->uploaddata->delete_match_data();
+                    
+                    // this will insert match data to database
+//                    $this->data['all_district_count'] = $product['district_count'];
+//                    $this->data['ambigous_district_count'] = $product['ambigous_district_count'];
+//                    $this->load->view('admin/upload_data_preview_page');
+                    redirect('admin/preview_uploaded_data');
 		}		
 	}
+        
+        public function preview_uploaded_data() {
+            $this->data = array_merge($this->data, $this->uploaddata->get_all());
+            $this->load->view('admin/upload_data_preview_page',$this->data);
+        }
+        
+        public function update_selected_data() {
+            
+            $uploadInfo = $this->uploaddata->get_upload_info();
+            
+            if (!empty($uploadInfo)) {
+                $arr = $this->input->post('selection');
+
+                if (!empty($arr) && is_array($arr)) {
+                    foreach ($arr as $key => $value) {
+                        if ($value != "-1" && $value != "") {
+                            $locInfo = explode("=", $value,2);
+                            $this->uploaddata->select_location($key, $locInfo[0], $locInfo[1], 
+                                    $uploadInfo['logistic_table_name'], 
+                                    $uploadInfo['logistic_service_type'],
+                                    $uploadInfo['logistic_company'],
+                                    $uploadInfo['origin_id']);
+                        }
+                    }
+                }
+                
+            }
+            
+            
+            $this->data= array_merge($this->data, $this->uploaddata->get_all());
+            $this->load->view('admin/upload_data_preview_page',$this->data);
+        }
 
 	private function get_logistic_service_types(){
 		$logistic_service_types = array();

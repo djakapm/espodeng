@@ -39,11 +39,12 @@ class JNEModel extends CI_Model {
 
         return $ret;
     }
-
+    
     public function get_logistic_service($origin_id, $destination_id, $weight, $table) {
         $product = array();
         $company_id = 1;
 
+        // find the city_id of given destination id
         $city_nodistrict = $this->get_nodistrict_origin_id($destination_id);
 
 
@@ -67,6 +68,23 @@ class JNEModel extends CI_Model {
             $this->db->where('ols.destination_id', $city_nodistrict);
             $logistic_service_query = $this->db->get();
             $logistic_service_results = $logistic_service_query->result();
+            
+        }
+        
+        // find any district with lowest price in this city
+        if (empty($logistic_service_results)) {
+            
+            // query with nodistrict
+            $this->db->select('orst.name service_name,ols.delivery_time,ols.unit_price');
+            $this->db->from($table . ' ols');
+            $this->db->join('ongkir_ref_service_type orst', 'orst.company_id = ols.company_id and orst.id = ols.service_type_id', 'inner');
+            $this->db->join('ongkir_ref_location l','l.id = ols.destination_id and l.city_id=(SELECT city_id FROM ongkir_ref_location WHERE id = '.$city_nodistrict.')');
+            $this->db->where(array('ols.company_id' => $company_id, 'ols.origin_id' => $origin_id));
+            $this->db->limit(1);
+            $logistic_service_query = $this->db->get();
+            $logistic_service_results = $logistic_service_query->result();
+            
+            error_log('no result: '. $this->db->last_query());
             
         }
         
