@@ -1,0 +1,36 @@
+/* 
+    Document   : admin
+    Created on : Dec 23, 2011, 11:56:21 PM
+    Author     : hendra
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+root { 
+    display: block;
+}
+
+tr.ambigous {
+    height:30px;background-color:orange;
+}
+
+tr.exact:nth-child(even) {
+    height:30px;background-color:#ccc;
+}
+
+tr.exact:nth-child(odd) {
+    height:30px;background-color:#fff;
+}
+
+tr.nomatch {
+    height:30px;background-color: red;
+}
+
+.location-input {
+    width: 210px;
+}
