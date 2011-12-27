@@ -228,7 +228,7 @@ class Admin extends CI_Controller {
 
                 if (!empty($arr) && is_array($arr)) {
                     foreach ($arr as $key => $value) {
-                        if ($value != "-1" && $value != "") {
+                        if ($value != "-1" && strpos($value, "=")) {
                             $locInfo = explode("=", $value,2);
                             $this->uploaddata->select_location($key, $locInfo[0], $locInfo[1], 
                                     $uploadInfo['logistic_table_name'], 

@@ -32,19 +32,6 @@ class UploadModel extends CI_Model {
         
     }
     
-    public function insert_temp_upload_csv_suggestion($csv_id, $suggestions) {
-
-        foreach($suggestions as $location_id => $name) {
-            $this->db->insert('ongkir_temp_upload_csv_suggestion',array(
-                'csv_id'=>$csv_id,
-                'location_id'=>$location_id,
-                'location_name'=>$name
-                ));
-
-        }
-        
-    }
-    
     public function insert_temp_upload_csv_info($origin_id, $logistic_company, $logistic_service_type, $tableName) {
         // TRUNCATE TABLE FIRST
         $this->db->query('truncate table ongkir_temp_upload_csv_info',FALSE);
@@ -63,25 +50,15 @@ class UploadModel extends CI_Model {
         $this->db->query('truncate table ongkir_temp_upload_csv',FALSE);
     }
     
-    public function clear_temp_upload_csv_suggestion_data() {
-        // TRUNCATE CHILD TABLE
-        $this->db->query('truncate table ongkir_temp_upload_csv_suggestion',FALSE);
-    }
     
     public function delete_match_data() {
-        $this->db->query('DELETE c.*, s.* FROM ongkir_temp_upload_csv c LEFT JOIN ongkir_temp_upload_csv_suggestion s ON c.id = s.csv_id
-                           WHERE c.lookup_status = 1; ');
+        $this->db->query('DELETE FROM ongkir_temp_upload_csv WHERE lookup_status = 1; ');
     }
     
     public function select_location($temp_table_id, $location_id, $location_name, $tableName, 
             $logistic_service_type, $logistic_company, $origin_id) {
-//        $this->db->query('DELETE FROM ongkir_temp_upload_csv_suggestion 
-//            WHERE csv_id = ? AND location_id <> ?', array($temp_table_id, $location_id));
         
-        //$this->db->query('UPDATE ongkir_temp_upload_csv SET lookup_status = 1, guessed_location_id=?, guessed_location_name=?
-        //    WHERE id=?', array($location_id, $location_name, $temp_table_id));
-        
-        error_log('about to select location');
+//        error_log('about to select location');
         
         $this->db->query('
                 INSERT INTO '.$tableName.' (service_type_id, company_id, origin_id, destination_id, unit_price, next_unit_price, delivery_time)
@@ -91,7 +68,7 @@ class UploadModel extends CI_Model {
 
         $this->db->query('delete from ongkir_temp_upload_csv where id = ?', array($temp_table_id));
 
-        error_log('last query: '. $this->db->last_query());
+//        error_log('last query: '. $this->db->last_query());
         
         
     }
@@ -132,12 +109,12 @@ class UploadModel extends CI_Model {
 
     public function insert_match_data_to_incremented_table($tableName){
         
-        error_log('about to insert_match_data_to_incremented_table');
+//        error_log('about to insert_match_data_to_incremented_table');
         
         $infoQuery = $this->db->get('ongkir_temp_upload_csv_info');
         $info = $infoQuery->row_array();
         
-        error_log('info: '.var_export($info, true));
+//        error_log('info: '.var_export($info, true));
         
         if (!empty($info)) {
             $this->db->query('
@@ -146,7 +123,7 @@ class UploadModel extends CI_Model {
                       FROM ongkir_temp_upload_csv u 
                      WHERE lookup_status = 1;', array($info['logistic_service_type'],$info['logistic_company'],$info['origin_id']));
             
-            error_log('last query: '. $this->db->last_query());
+//            error_log('last query: '. $this->db->last_query());
         }
         
     }
@@ -163,7 +140,6 @@ class UploadModel extends CI_Model {
             
             // clear temp table first
             $this->clear_temp_upload_csv_data();
-            $this->clear_temp_upload_csv_suggestion_data();
             
             $rowId = 1;
             while (($data = fgetcsv($handle, 1000, "#")) !== FALSE) {
