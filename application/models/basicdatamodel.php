@@ -2,7 +2,7 @@
 
 class BasicDataModel extends CI_Model {
 
-	var $search_limit = 10;
+	var $search_limit = 15;
 
     function __construct()
     {
@@ -97,7 +97,7 @@ class BasicDataModel extends CI_Model {
     			$search_result[$row->id] = array($city_name.','.$state_name);
     		}
     		else{
-    			$search_result[$row->id] = array($district_name.' ,'.$city_name.','.$state_name);
+    			$search_result[$row->id] = array($district_name.' ,'.$city_name);
     		}
     	}
 
